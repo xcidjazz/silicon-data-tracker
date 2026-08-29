@@ -1,0 +1,98 @@
+name: Daily scrape
+
+# Three runs a day. GitHub's scheduler is best-effort - runs are often late and are
+# occasionally skipped entirely under load. The token and GPU feeds serve a rolling
+# 7-day window so a miss self-heals, but the forward curve publishes ONE snapshot per
+# day with no backfill: a skipped day is gone forever. Three attempts makes that
+# vanishingly unlikely without meaningfully using the free-minutes budget.
+on:
+  schedule:
+    - cron: "20 1 * * *"    # 09:20 Singapore
+    - cron: "20 9 * * *"    # 17:20 Singapore
+    - cron: "20 16 * * *"   # 00:20 Singapore
+  workflow_dispatch:
+
+concurrency:
+  group: daily-scrape
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --quiet requests openpyxl
+
+      - name: Scrape all datasets
+        id: scrape
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scrape_llm_index.py
+
+      - name: Build site
+        run: python build_site.py
+
+      - name: Commit new data
+        id: commit
+        run: |
+          git config user.name "silicon-data-bot"
+          git config user.email "actions@github.com"
+          git add -A data site LLM_Token_Expenditure_Index.xlsx logs 2>/dev/null || git add -A
+          if git diff --cached --quiet; then
+            echo "changed=0" >> "$GITHUB_OUTPUT"
+            echo "Nothing new to commit."
+          else
+            echo "changed=1" >> "$GITHUB_OUTPUT"
+            git commit -m "data: $(date -u +%Y-%m-%d) automated capture"
+            git push
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Telegram summary
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python notify.py --url "${{ steps.deploy.outputs.page_url }}" --changed "${{ steps.commit.outputs.changed }}"
+
+      # The scraper Telegrams its own failure with the specific error. This is the
+      # backstop for everything else that can break the run - checkout, pip, Pages
+      # deploy, a runner dying - so a silent failure is impossible.
+      - name: Telegram failure alert
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python - <<'PY'
+          import os, urllib.parse, urllib.request
+          token = os.environ["TELEGRAM_BOT_TOKEN"]; chat = os.environ["TELEGRAM_CHAT_ID"]
+          run = "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          text = ("AI Compute Tape - RUN FAILED\n\n"
+                  "The daily scrape did not complete. Today's data may be missing.\n"
+                  "The forward curve cannot be back-filled, so check promptly.\n\n" + run)
+          body = urllib.parse.urlencode({"chat_id": chat, "text": text,
+                                         "disable_web_page_preview": "true"}).encode()
+          urllib.request.urlopen(urllib.request.Request(
+              f"https://api.telegram.org/bot{token}/sendMessage", data=body), timeout=30)
+          PY

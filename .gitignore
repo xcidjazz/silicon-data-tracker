@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.tmp
+
+# Local safety nets. Git history is the archive's version control in this repo.
+backups/
+logs/
+
+# Generated each run and deployed straight to Pages - committing it every day is
+# what bloated a previous tracker's .git to over a gigabyte.
+site/index.html
