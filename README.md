@@ -76,3 +76,13 @@ back-filled, so the redundancy is deliberate rather than wasteful.
 
 A Telegram summary goes out on success; the scraper reports its own error on failure, and
 the workflow has a backstop alert for everything else that can break a run.
+
+## Keeping a local copy in sync
+
+`sync_from_repo.py` pulls this archive down and merges it into a local vault copy,
+filling any days that machine missed while it was off. The merge is a union on each
+dataset's natural key: rows only the local machine caught are never dropped, and where
+both sides hold the same key and disagree the cloud value wins and the change is logged.
+
+It runs before the local scrape, so the daily order on that machine is sync, then scrape —
+covering the case where the cloud missed a day as well as the case where the laptop did.
