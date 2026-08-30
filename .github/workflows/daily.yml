@@ -49,11 +49,21 @@ jobs:
         run: |
           git config user.name "silicon-data-bot"
           git config user.email "actions@github.com"
-          git add -A data site LLM_Token_Expenditure_Index.xlsx logs 2>/dev/null || git add -A
+
+          # Stage the archive ONLY, and decide from it whether anything really happened.
+          # The workbook is rebuilt every run and carries a "Last updated" timestamp on its
+          # Source sheet, so its bytes differ even when zero rows were added. Committing it
+          # unconditionally would add a ~40KB binary blob three times a day forever - the
+          # same churn that grew a previous tracker's .git past a gigabyte. So the archive
+          # is the source of truth for "did anything change", and the workbook only rides
+          # along when it did.
+          git add -A data
           if git diff --cached --quiet; then
+            git reset -q
             echo "changed=0" >> "$GITHUB_OUTPUT"
-            echo "Nothing new to commit."
+            echo "No new data published since the last run - nothing committed."
           else
+            git add -f LLM_Token_Expenditure_Index.xlsx
             echo "changed=1" >> "$GITHUB_OUTPUT"
             git commit -m "data: $(date -u +%Y-%m-%d) automated capture"
             git push
