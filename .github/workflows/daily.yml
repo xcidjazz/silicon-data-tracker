@@ -11,6 +11,11 @@ on:
     - cron: "20 9 * * *"    # 17:20 Singapore
     - cron: "20 16 * * *"   # 00:20 Singapore
   workflow_dispatch:
+    inputs:
+      selftest:
+        description: "Force the stale-feed alert to fire, to prove the alarm still works"
+        type: boolean
+        default: false
 
 concurrency:
   group: daily-scrape
@@ -39,6 +44,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STALE_SELFTEST: ${{ inputs.selftest && '1' || '' }}
         run: python scrape_llm_index.py
 
       - name: Build site

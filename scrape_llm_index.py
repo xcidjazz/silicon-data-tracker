@@ -215,11 +215,19 @@ MAX_LAG_DAYS = {"llm": 3, "gpu": 3, "fc": 3, "ramp": 95}
 
 
 def check_freshness(label, latest_iso):
-    """Currency check, separate from the cross-checks' consistency check."""
+    """Currency check, separate from the cross-checks' consistency check.
+
+    Set STALE_SELFTEST=1 to force every feed to report stale. That exists so the
+    alert path itself can be exercised end-to-end from CI on demand - an alarm that
+    has never been rung is not known to work, which is the whole lesson of the
+    2026-08-31 cache bug.
+    """
     try:
         lag = (date.today() - date.fromisoformat(latest_iso[:10])).days
     except ValueError:
         return None
+    if os.environ.get("STALE_SELFTEST"):
+        return f"{label}: SELF-TEST (latest {latest_iso}, {lag}d) - not a real staleness alert"
     limit = MAX_LAG_DAYS.get(label, 3)
     if lag > limit:
         msg = f"{label}: latest {latest_iso} is {lag} days old (expected <= {limit})"
