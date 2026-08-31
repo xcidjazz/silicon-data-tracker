@@ -33,7 +33,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timezone
+import time
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import requests
@@ -185,6 +186,48 @@ RE_PAIR = re.compile(Q + r"(\d{4}-\d{2}-\d{2})" + Q + r"\s*:\s*" + Q + r"([0-9]+
 RE_INDEXES = re.compile(Q + "indexes" + Q + r"\s*:\s*\{(.*?)\}", re.S)
 
 
+# Cache-busting. Observed 2026-08-31: the token endpoint served GitHub's datacenter IPs a
+# response frozen at 2026-08-28 for four consecutive runs while the same code on a home
+# connection got 2026-08-30. The public page served to those runners was stale in the same
+# way, so portal and page agreed and the cross-check passed - two stale surfaces agreeing
+# defeats a consistency check. The GPU endpoint was unaffected, and it is the one carrying
+# extra query params, which is what points at an edge cache keyed on the URL.
+NO_CACHE = {"Cache-Control": "no-cache", "Pragma": "no-cache"}
+
+
+def bust(params=None):
+    """Add a per-request token so an edge cache cannot serve a stale copy."""
+    p = dict(params or {})
+    p["_"] = str(int(time.time() * 1000))
+    return p
+
+
+# How many days behind today each feed may legitimately be before it is called stale.
+# Silicon Data publishes with roughly a one-day lag, so 3 days is generous but quiet.
+# Ramp is the awkward one: rows are dated to the FIRST of the month and month M is
+# published around the end of M+1, so a perfectly healthy Ramp feed is routinely
+# 60-90 days "old" by this measure. A first pass at 50 fired a false alert on a normal
+# feed - and an alarm that cries wolf is worse than no alarm, because it trains you to
+# ignore the real one. 95 still catches Ramp stopping publication outright, which is
+# the only Ramp failure worth waking anyone for (it serves full history, so it
+# self-heals and a missed day costs nothing).
+MAX_LAG_DAYS = {"llm": 3, "gpu": 3, "fc": 3, "ramp": 95}
+
+
+def check_freshness(label, latest_iso):
+    """Currency check, separate from the cross-checks' consistency check."""
+    try:
+        lag = (date.today() - date.fromisoformat(latest_iso[:10])).days
+    except ValueError:
+        return None
+    limit = MAX_LAG_DAYS.get(label, 3)
+    if lag > limit:
+        msg = f"{label}: latest {latest_iso} is {lag} days old (expected <= {limit})"
+        log(f"  STALE {msg}")
+        return msg
+    return None
+
+
 def log(msg):
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     line = f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%SZ')}  {msg}"
@@ -261,7 +304,7 @@ def parse_indexes(html, label):
 
 def fetch_llm(session, token):
     col, expect_name, _ = LLM_SERIES[token]
-    r = session.get(TOKEN_PORTAL, params={"token": token}, timeout=45)
+    r = session.get(TOKEN_PORTAL, params=bust({"token": token}), timeout=45, headers=NO_CACHE)
     r.raise_for_status()
     html = r.text
     if echoed(html, "token") != token:
@@ -274,7 +317,8 @@ def fetch_llm(session, token):
 
 
 def fetch_gpu(session, col, gpu, tab):
-    r = session.get(GPU_PORTAL, params={"standalone": "true", "gpu": gpu, "mainTab": tab}, timeout=45)
+    r = session.get(GPU_PORTAL, params=bust({"standalone": "true", "gpu": gpu, "mainTab": tab}),
+                    timeout=45, headers=NO_CACHE)
     r.raise_for_status()
     html = r.text
     got_gpu, got_tab = echoed(html, "gpu"), echoed(html, "initialMainTab")
@@ -292,7 +336,7 @@ def fetch_gpu(session, col, gpu, tab):
 
 
 def fetch_marketing_page(session):
-    r = session.get(MARKETING, timeout=45)
+    r = session.get(MARKETING, params=bust(), timeout=45, headers=NO_CACHE)
     r.raise_for_status()
     return r.text
 
@@ -385,7 +429,7 @@ def cross_check(series, readings):
 
 def fetch_forward_curve(session):
     """Return (as_of_date, payload) for the full 3-GPU x 145-tenor curve set."""
-    r = session.get(FC_PORTAL, timeout=45)
+    r = session.get(FC_PORTAL, params=bust(), timeout=45, headers=NO_CACHE)
     r.raise_for_status()
     html = r.text
     m = re.search(Q + "data" + Q + r"\s*:\s*\{" + Q + "date" + Q, html)
@@ -622,7 +666,7 @@ def _num(v):
 
 
 def fetch_ramp(session):
-    r = session.get(RAMP_URL, timeout=90)
+    r = session.get(RAMP_URL, params=bust(), timeout=90, headers=NO_CACHE)
     r.raise_for_status()
     stream = _rsc_stream(r.text)
     if len(stream) < 100_000:
@@ -1184,12 +1228,31 @@ def main():
             # Workbook open in Excel. CSVs already have the data; next run catches up.
             log("  WARN xlsx locked (open in Excel?) - CSVs updated, sheets sync next run")
 
+    # Currency check, separate from the cross-checks. Those verify the portal agrees
+    # with the public page; they cannot catch BOTH surfaces being stale together, which
+    # is exactly what an edge cache did to the token feed on 2026-08-28..30.
+    stale = []
+    for key, rows in archives.items():
+        if rows:
+            stale.append(check_freshness(key, max(rows)))
+    if curves:
+        stale.append(check_freshness("fc", max(k[0] for k in curves)))
+    if ramp:
+        stale.append(check_freshness("ramp", max(k[0] for k in next(iter(ramp.values())))))
+    stale = [s for s in stale if s]
+    if stale:
+        body = "\n".join("- " + s for s in stale)
+        notify_failure(
+            "AI Compute Tape - STALE FEED\n\n" + body
+            + "\n\nThe run completed and wrote what it received, but at least one source is "
+              "serving old data. Check whether that endpoint is being edge-cached.")
+
     tail = "  ".join(f"{k}={max(v)}" for k, v in archives.items() if v)
     if curves:
         tail += f"  fc={max(k[0] for k in curves)}"
     if ramp:
         tail += f"  ramp={max(k[0] for k in next(iter(ramp.values())))}"
-    log("=== run ok  " + tail)
+    log("=== run " + ("ok" if not stale else f"ok (WITH {len(stale)} STALE FEED(S))") + "  " + tail)
     return 0
 
 
