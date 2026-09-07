@@ -203,7 +203,13 @@ def bust(params=None):
 
 
 # How many days behind today each feed may legitimately be before it is called stale.
-# Silicon Data publishes with roughly a one-day lag, so 3 days is generous but quiet.
+#
+# These are tolerances for the PUBLISHER's own lag, which is not constant. Measured:
+# the token index ran 1 day behind on 2026-08-31 and 3 days behind on 2026-09-07 - the
+# public page said "as of Sep 5" while our archive held Sep 5, i.e. perfectly in sync
+# with a slow publisher. A threshold of 3 would have cried wolf the first time their lag
+# reached 4. GPU and the forward curve have held at ~1 day. So: roughly double the
+# observed worst case, which still catches a feed frozen for the better part of a week.
 # Ramp is the awkward one: rows are dated to the FIRST of the month and month M is
 # published around the end of M+1, so a perfectly healthy Ramp feed is routinely
 # 60-90 days "old" by this measure. A first pass at 50 fired a false alert on a normal
@@ -211,7 +217,7 @@ def bust(params=None):
 # ignore the real one. 95 still catches Ramp stopping publication outright, which is
 # the only Ramp failure worth waking anyone for (it serves full history, so it
 # self-heals and a missed day costs nothing).
-MAX_LAG_DAYS = {"llm": 3, "gpu": 3, "fc": 3, "ramp": 95}
+MAX_LAG_DAYS = {"llm": 6, "gpu": 4, "fc": 4, "ramp": 95}
 
 
 def check_freshness(label, latest_iso):
