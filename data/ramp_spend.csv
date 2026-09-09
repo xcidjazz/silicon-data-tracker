@@ -9,464 +9,479 @@ date_month,breakdown,dimension,median_pepm,p90_pepm,p99_pepm,top_10_percent_medi
 2023-08-01,Sector,Finance and insurance,2.7300,,,,,4.4800
 2023-08-01,Sector,"Professional, scientific, and technical services",2.5000,,,,,6.1300
 2023-08-01,Sector,Technology and media,3.7700,,,,,8.9900
-2023-09-01,Business size,Large,0.4600,,,,,4.5500
-2023-09-01,Business size,Medium,1.7600,,,,,11.4800
-2023-09-01,Business size,Small,5.0000,,,,,20.5600
-2023-09-01,Financing status,Other,2.1700,,,,,2.2000
-2023-09-01,Financing status,PE-backed,0.6700,,,,,2.9000
-2023-09-01,Financing status,VC-backed,3.3300,,,,,8.0200
-2023-09-01,Overall,,2.4900,29.6800,316.9000,61.7100,642.8800,3.7500
-2023-09-01,Sector,Finance and insurance,3.0200,,,,,5.4300
-2023-09-01,Sector,"Professional, scientific, and technical services",2.6100,,,,,5.5200
-2023-09-01,Sector,Technology and media,4.4000,,,,,6.7000
-2023-10-01,Business size,Large,0.5500,,,,,4.4500
-2023-10-01,Business size,Medium,1.9400,,,,,11.9700
-2023-10-01,Business size,Small,5.0000,,,,,19.1300
-2023-10-01,Financing status,Other,2.2200,,,,,1.7700
-2023-10-01,Financing status,PE-backed,0.8100,,,,,1.8700
-2023-10-01,Financing status,VC-backed,3.7000,,,,,11.3900
-2023-10-01,Overall,,2.6400,29.4200,309.5500,65.0200,571.4300,3.9300
-2023-10-01,Sector,Finance and insurance,3.3300,,,,,6.6400
-2023-10-01,Sector,"Professional, scientific, and technical services",2.6600,,,,,8.4900
-2023-10-01,Sector,Technology and media,4.5700,,,,,7.2200
-2023-11-01,Business size,Large,0.5500,,,,,6.3300
-2023-11-01,Business size,Medium,2.0500,,,,,13.4300
-2023-11-01,Business size,Small,5.0000,,,,,21.6400
-2023-11-01,Financing status,Other,2.2900,,,,,2.7700
-2023-11-01,Financing status,PE-backed,0.7700,,,,,1.8100
-2023-11-01,Financing status,VC-backed,4.0300,,,,,11.8200
-2023-11-01,Overall,,2.7400,33.5500,375.0700,75.4000,675.8000,4.7600
-2023-11-01,Sector,Finance and insurance,3.4000,,,,,8.9500
-2023-11-01,Sector,Manufacturing,1.2900,,,,,0.5400
-2023-11-01,Sector,"Professional, scientific, and technical services",2.8600,,,,,8.8700
-2023-11-01,Sector,Technology and media,4.8600,,,,,11.1500
-2023-12-01,Business size,Large,0.5500,,,,,5.6100
-2023-12-01,Business size,Medium,2.0200,,,,,11.7000
-2023-12-01,Business size,Small,5.0000,,,,,21.2300
-2023-12-01,Financing status,Other,2.2200,,,,,2.6800
-2023-12-01,Financing status,PE-backed,0.7800,,,,,1.6800
-2023-12-01,Financing status,VC-backed,4.1000,,,,,11.4200
-2023-12-01,Overall,,2.6700,32.3700,336.8300,71.4600,649.9100,4.5100
-2023-12-01,Sector,Finance and insurance,3.4000,,,,,5.9200
-2023-12-01,Sector,Health care,1.2500,,,,,0.9600
-2023-12-01,Sector,Manufacturing,1.2800,,,,,0.6700
-2023-12-01,Sector,"Professional, scientific, and technical services",2.7900,,,,,7.8300
-2023-12-01,Sector,Technology and media,5.1500,,,,,9.8500
-2024-01-01,Business size,Large,0.6700,,,,,5.8600
-2024-01-01,Business size,Medium,2.2800,,,,,13.4300
-2024-01-01,Business size,Small,5.4600,,,,,24.3900
-2024-01-01,Financing status,Other,2.3900,,,,,2.3500
-2024-01-01,Financing status,PE-backed,0.9000,,,,,0.8800
-2024-01-01,Financing status,VC-backed,4.4400,,,,,7.1000
-2024-01-01,Overall,,2.8600,38.1000,423.7400,85.6100,755.3400,3.2600
-2024-01-01,Sector,Finance and insurance,3.6400,,,,,4.3200
-2024-01-01,Sector,Health care,1.1700,,,,,1.0600
-2024-01-01,Sector,Manufacturing,1.4300,,,,,0.7700
-2024-01-01,Sector,"Professional, scientific, and technical services",3.2000,,,,,6.1000
-2024-01-01,Sector,Technology and media,5.7500,,,,,12.0700
-2024-02-01,Business size,Large,0.7000,,,,,5.5600
-2024-02-01,Business size,Medium,2.2800,,,,,13.0400
-2024-02-01,Business size,Small,5.6800,,,,,26.1300
-2024-02-01,Financing status,Other,2.4000,,,,,2.6700
-2024-02-01,Financing status,PE-backed,1.0500,,,,,0.8700
-2024-02-01,Financing status,VC-backed,4.7900,,,,,7.4700
-2024-02-01,Overall,,2.9400,37.9600,396.7400,79.4300,802.3000,3.4100
-2024-02-01,Sector,Finance and insurance,3.5500,,,,,5.3300
-2024-02-01,Sector,Health care,1.1700,,,,,0.7600
-2024-02-01,Sector,Manufacturing,1.4300,,,,,0.8900
-2024-02-01,Sector,"Professional, scientific, and technical services",3.3300,,,,,6.8100
-2024-02-01,Sector,Technology and media,5.9100,,,,,12.9000
-2024-03-01,Business size,Large,0.7700,,,,,6.8500
-2024-03-01,Business size,Medium,2.3300,,,,,14.3300
-2024-03-01,Business size,Small,6.2400,,,,,30.0700
-2024-03-01,Financing status,Other,2.4400,,,,,2.6300
-2024-03-01,Financing status,PE-backed,1.0100,,,,,0.8400
-2024-03-01,Financing status,VC-backed,5.8300,,,,,8.0300
-2024-03-01,Overall,,3.1100,44.5500,453.7600,97.0900,1116.8800,3.4700
-2024-03-01,Sector,Finance and insurance,3.5500,,,,,4.3200
-2024-03-01,Sector,Health care,1.2500,,,,,1.0700
-2024-03-01,Sector,Manufacturing,1.4300,,,,,1.1000
-2024-03-01,Sector,"Professional, scientific, and technical services",3.7000,,,,,9.7800
-2024-03-01,Sector,Technology and media,7.2800,,,,,7.1400
-2024-04-01,Business size,Large,0.8200,,,,,7.1400
-2024-04-01,Business size,Medium,2.3500,,,,,14.6900
-2024-04-01,Business size,Small,6.1300,,,,,31.2200
-2024-04-01,Financing status,Other,2.3600,,,,,2.4300
-2024-04-01,Financing status,PE-backed,1.0800,,,,,1.0100
-2024-04-01,Financing status,VC-backed,6.0000,,,,,11.0600
-2024-04-01,Overall,,3.1000,42.6600,502.9700,90.4400,1277.9900,3.9700
-2024-04-01,Sector,Finance and insurance,4.0000,,,,,6.8800
-2024-04-01,Sector,Health care,1.2500,,,,,0.7700
-2024-04-01,Sector,Manufacturing,1.4300,,,,,1.0300
-2024-04-01,Sector,"Professional, scientific, and technical services",3.6200,,,,,11.6200
-2024-04-01,Sector,Technology and media,6.9400,,,,,9.4200
-2024-05-01,Business size,Large,0.7500,,,,,8.1600
-2024-05-01,Business size,Medium,2.5100,,,,,17.3600
-2024-05-01,Business size,Small,6.2800,,,,,29.1200
-2024-05-01,Financing status,Other,2.3700,,,,,2.9100
-2024-05-01,Financing status,PE-backed,1.0500,,,,,1.0000
-2024-05-01,Financing status,VC-backed,6.5000,,,,,11.7000
-2024-05-01,Overall,,3.1800,45.5300,544.7100,97.1900,997.3000,4.3100
-2024-05-01,Sector,Finance and insurance,4.0000,,,,,8.1900
-2024-05-01,Sector,Health care,1.2500,,,,,1.0700
-2024-05-01,Sector,Manufacturing,1.6700,,,,,1.3000
-2024-05-01,Sector,"Professional, scientific, and technical services",3.7500,,,,,11.0700
-2024-05-01,Sector,Technology and media,7.2600,,,,,9.4100
-2024-06-01,Business size,Large,0.7600,,,,,7.6200
-2024-06-01,Business size,Medium,2.3100,,,,,15.0100
-2024-06-01,Business size,Small,6.3600,,,,,30.0300
-2024-06-01,Financing status,Other,2.3900,,,,,2.3900
-2024-06-01,Financing status,PE-backed,0.8900,,,,,0.8900
-2024-06-01,Financing status,VC-backed,6.2800,,,,,13.4700
-2024-06-01,Overall,,3.1100,43.6300,539.9300,98.6200,1147.4500,4.0400
-2024-06-01,Sector,Finance and insurance,3.6600,,,,,5.0900
-2024-06-01,Sector,Health care,1.2500,,,,,1.0700
-2024-06-01,Sector,Manufacturing,1.4500,,,,,1.2100
-2024-06-01,Sector,"Professional, scientific, and technical services",3.9200,,,,,12.8700
-2024-06-01,Sector,Technology and media,7.1700,,,,,10.6500
-2024-07-01,Business size,Large,0.7600,,,,,8.4300
-2024-07-01,Business size,Medium,2.2900,,,,,15.7600
-2024-07-01,Business size,Small,6.0000,,,,,32.8400
-2024-07-01,Financing status,Other,2.4200,,,,,2.8600
-2024-07-01,Financing status,PE-backed,1.0100,,,,,1.2000
-2024-07-01,Financing status,VC-backed,6.2100,,,,,14.9600
-2024-07-01,Overall,,3.0800,45.0800,625.5900,103.1600,1408.3100,4.8000
-2024-07-01,Sector,Finance and insurance,3.7500,,,,,6.5600
-2024-07-01,Sector,Health care,1.2700,,,,,2.0300
-2024-07-01,Sector,Manufacturing,1.4300,,,,,1.0600
-2024-07-01,Sector,"Professional, scientific, and technical services",3.9300,,,,,10.1200
-2024-07-01,Sector,Technology and media,7.2100,,,,,12.4500
-2024-08-01,Business size,Large,0.7500,,,,,9.2700
-2024-08-01,Business size,Medium,2.2800,,,,,17.8900
-2024-08-01,Business size,Small,6.3200,,,,,33.0300
-2024-08-01,Financing status,Other,2.3800,,,,,3.0000
-2024-08-01,Financing status,PE-backed,0.9600,,,,,1.1300
-2024-08-01,Financing status,VC-backed,6.6700,,,,,15.3800
-2024-08-01,Overall,,3.0300,45.5200,679.3200,101.2900,1320.2600,4.9900
-2024-08-01,Sector,Finance and insurance,3.7100,,,,,7.4900
-2024-08-01,Sector,Health care,1.1300,,,,,1.4400
-2024-08-01,Sector,Manufacturing,1.4300,,,,,1.0800
-2024-08-01,Sector,"Professional, scientific, and technical services",4.0000,,,,,10.7700
-2024-08-01,Sector,Technology and media,7.6300,,,,,13.4800
-2024-09-01,Business size,Large,0.7100,,,,,7.0300
-2024-09-01,Business size,Medium,2.4000,,,,,16.0100
-2024-09-01,Business size,Small,6.4300,,,,,30.9200
-2024-09-01,Financing status,Other,2.3100,,,,,2.4500
-2024-09-01,Financing status,PE-backed,1.0400,,,,,0.9600
-2024-09-01,Financing status,VC-backed,6.8400,,,,,14.1400
-2024-09-01,Overall,,3.1100,45.5300,545.0700,102.4000,1396.0800,4.0700
-2024-09-01,Sector,Finance and insurance,4.0800,,,,,5.7800
-2024-09-01,Sector,Health care,1.1800,,,,,1.0700
-2024-09-01,Sector,Manufacturing,1.3900,,,,,1.1700
-2024-09-01,Sector,"Professional, scientific, and technical services",4.3100,,,,,11.5600
-2024-09-01,Sector,Technology and media,7.5800,,,,,11.5200
-2024-10-01,Business size,Large,0.7400,,,,,9.0300
-2024-10-01,Business size,Medium,2.4800,,,,,16.9800
-2024-10-01,Business size,Small,6.5000,,,,,34.5300
-2024-10-01,Financing status,Other,2.3800,,,,,2.8400
-2024-10-01,Financing status,PE-backed,1.1400,,,,,1.2700
-2024-10-01,Financing status,VC-backed,7.1400,,,,,16.9300
-2024-10-01,Overall,,3.2500,47.0800,577.6900,110.2900,1157.7600,4.8900
-2024-10-01,Sector,Finance and insurance,4.4000,,,,,6.3300
-2024-10-01,Sector,Health care,1.2100,,,,,2.0800
-2024-10-01,Sector,Manufacturing,1.7500,,,,,1.2800
-2024-10-01,Sector,"Professional, scientific, and technical services",4.4100,,,,,12.9900
-2024-10-01,Sector,Technology and media,8.2100,,,,,13.2400
-2024-11-01,Business size,Large,0.6800,,,,,10.2000
-2024-11-01,Business size,Medium,2.4500,,,,,16.8300
-2024-11-01,Business size,Small,6.6700,,,,,35.2600
-2024-11-01,Financing status,Other,2.4100,,,,,1.3700
-2024-11-01,Financing status,PE-backed,1.1500,,,,,1.1800
-2024-11-01,Financing status,VC-backed,7.7500,,,,,17.7100
-2024-11-01,Overall,,3.3300,46.8100,686.5900,107.1800,1311.3700,3.2000
-2024-11-01,Sector,Finance and insurance,4.8700,,,,,6.4400
-2024-11-01,Sector,Health care,1.2300,,,,,1.4400
-2024-11-01,Sector,Manufacturing,1.7900,,,,,0.9800
-2024-11-01,Sector,"Professional, scientific, and technical services",4.4400,,,,,13.4200
-2024-11-01,Sector,Retail,1.7900,,,,,0.0900
-2024-11-01,Sector,Technology and media,8.9200,,,,,15.2200
-2024-12-01,Business size,Large,0.7300,,,,,9.6300
-2024-12-01,Business size,Medium,2.5000,,,,,19.9800
-2024-12-01,Business size,Small,6.6700,,,,,35.3100
-2024-12-01,Financing status,Other,2.3800,,,,,1.5400
-2024-12-01,Financing status,PE-backed,1.0700,,,,,1.1400
-2024-12-01,Financing status,VC-backed,8.2600,,,,,18.9100
-2024-12-01,Overall,,3.3000,51.2500,711.9300,117.8300,1480.2100,3.3200
-2024-12-01,Sector,Finance and insurance,5.0000,,,,,6.2300
-2024-12-01,Sector,Health care,1.1500,,,,,1.8700
-2024-12-01,Sector,Manufacturing,1.8200,,,,,1.4900
-2024-12-01,Sector,"Professional, scientific, and technical services",4.5400,,,,,12.0300
-2024-12-01,Sector,Retail,1.7900,,,,,0.1300
-2024-12-01,Sector,Technology and media,9.7200,,,,,17.1800
-2025-01-01,Business size,Large,0.8000,,,,,12.0100
-2025-01-01,Business size,Medium,2.5400,,,,,19.7400
-2025-01-01,Business size,Small,7.5100,,,,,40.3000
-2025-01-01,Financing status,Other,2.5000,,,,,1.7100
-2025-01-01,Financing status,PE-backed,1.2400,,,,,1.4800
-2025-01-01,Financing status,VC-backed,9.1900,,,,,20.5800
-2025-01-01,Overall,,3.4900,59.0700,636.9900,137.4700,1432.4200,3.6900
-2025-01-01,Sector,Finance and insurance,5.5100,,,,,6.8100
-2025-01-01,Sector,Health care,1.2300,,,,,2.3200
-2025-01-01,Sector,Manufacturing,1.8900,,,,,1.3500
-2025-01-01,Sector,"Professional, scientific, and technical services",5.2500,,,,,15.0700
-2025-01-01,Sector,Retail,1.9500,,,,,0.1200
-2025-01-01,Sector,Technology and media,11.4600,,,,,19.5600
-2025-02-01,Business size,Large,0.8300,,,,,11.0400
-2025-02-01,Business size,Medium,2.8600,,,,,20.8100
-2025-02-01,Business size,Small,8.8000,,,,,39.6400
-2025-02-01,Financing status,Other,2.6600,,,,,1.5200
-2025-02-01,Financing status,PE-backed,1.2600,,,,,1.2000
-2025-02-01,Financing status,VC-backed,10.5000,,,,,23.0500
-2025-02-01,Overall,,3.8500,64.4500,725.2800,132.9700,1523.5800,3.4300
-2025-02-01,Sector,Construction,1.1100,,,,,1.1900
-2025-02-01,Sector,Finance and insurance,6.3900,,,,,7.0300
-2025-02-01,Sector,Health care,1.3300,,,,,1.8800
-2025-02-01,Sector,Manufacturing,2.1300,,,,,0.6600
-2025-02-01,Sector,"Professional, scientific, and technical services",6.0000,,,,,15.7400
-2025-02-01,Sector,Retail,1.8200,,,,,0.0900
-2025-02-01,Sector,Technology and media,11.8700,,,,,22.1700
-2025-03-01,Business size,Large,0.9300,,,,,13.9100
-2025-03-01,Business size,Medium,3.0000,,,,,21.1400
-2025-03-01,Business size,Small,9.2300,,,,,38.5500
-2025-03-01,Financing status,Other,2.8100,,,,,1.6200
-2025-03-01,Financing status,PE-backed,1.3700,,,,,1.7800
-2025-03-01,Financing status,VC-backed,11.4600,,,,,24.8700
-2025-03-01,Overall,,4.0000,65.5900,701.6300,137.1700,1623.2000,3.8500
-2025-03-01,Sector,Construction,1.1600,,,,,1.6300
-2025-03-01,Sector,Finance and insurance,7.7300,,,,,7.9200
-2025-03-01,Sector,Health care,1.4200,,,,,2.8100
-2025-03-01,Sector,Manufacturing,2.3200,,,,,0.5300
-2025-03-01,Sector,"Professional, scientific, and technical services",6.6700,,,,,18.1100
-2025-03-01,Sector,Retail,2.0000,,,,,0.1400
-2025-03-01,Sector,Technology and media,13.1100,,,,,24.7100
-2025-04-01,Business size,Large,0.8800,,,,,15.1200
-2025-04-01,Business size,Medium,2.9600,,,,,22.9400
-2025-04-01,Business size,Small,8.5300,,,,,42.2800
-2025-04-01,Financing status,Other,2.6900,,,,,1.9500
-2025-04-01,Financing status,PE-backed,1.6400,,,,,1.7900
-2025-04-01,Financing status,VC-backed,12.5500,,,,,30.4800
-2025-04-01,Overall,,4.0000,67.9900,780.7900,147.5100,1772.2100,4.5400
-2025-04-01,Sector,Construction,1.1800,,,,,1.9500
-2025-04-01,Sector,Finance and insurance,7.2000,,,,,6.2600
-2025-04-01,Sector,Health care,1.3300,,,,,1.4200
-2025-04-01,Sector,Manufacturing,2.2000,,,,,1.0200
-2025-04-01,Sector,"Professional, scientific, and technical services",7.2600,,,,,22.7800
-2025-04-01,Sector,Retail,1.9200,,,,,0.0900
-2025-04-01,Sector,Technology and media,13.4200,,,,,27.4100
-2025-05-01,Business size,Large,0.9800,,,,,15.9100
-2025-05-01,Business size,Medium,3.1900,,,,,24.5100
-2025-05-01,Business size,Small,9.6100,,,,,45.1900
-2025-05-01,Financing status,Other,2.8600,,,,,1.9900
-2025-05-01,Financing status,PE-backed,1.5600,,,,,1.9000
-2025-05-01,Financing status,VC-backed,14.5300,,,,,33.7900
-2025-05-01,Overall,,4.1200,73.3300,819.3300,159.5600,1827.8700,4.9200
-2025-05-01,Sector,Construction,1.1800,,,,,1.7000
-2025-05-01,Sector,Finance and insurance,8.8500,,,,,7.4700
-2025-05-01,Sector,Health care,1.4500,,,,,1.9700
-2025-05-01,Sector,Manufacturing,2.3500,,,,,0.9500
-2025-05-01,Sector,"Professional, scientific, and technical services",7.8900,,,,,24.4100
-2025-05-01,Sector,Retail,2.4900,,,,,0.1300
-2025-05-01,Sector,Technology and media,16.0400,,,,,32.4700
-2025-06-01,Business size,Large,1.1100,,,,,14.9200
-2025-06-01,Business size,Medium,3.3300,,,,,24.8500
-2025-06-01,Business size,Small,9.9000,,,,,47.2600
-2025-06-01,Financing status,Other,2.8800,,,,,2.1700
-2025-06-01,Financing status,PE-backed,1.8600,,,,,2.3600
-2025-06-01,Financing status,VC-backed,16.5200,,,,,28.5000
-2025-06-01,Overall,,4.2900,76.6200,806.9700,165.0300,1652.6700,4.8700
-2025-06-01,Sector,Construction,1.2000,,,,,1.8100
-2025-06-01,Sector,Finance and insurance,9.8800,,,,,8.5000
-2025-06-01,Sector,Health care,1.5800,,,,,2.1600
-2025-06-01,Sector,Manufacturing,2.3800,,,,,0.9900
-2025-06-01,Sector,"Professional, scientific, and technical services",8.2800,,,,,21.4400
-2025-06-01,Sector,Retail,2.8900,,,,,0.2000
-2025-06-01,Sector,Technology and media,18.0800,,,,,24.6900
-2025-07-01,Business size,Large,1.1000,,,,,18.2500
-2025-07-01,Business size,Medium,3.7900,,,,,31.5900
-2025-07-01,Business size,Small,10.0000,,,,,49.7600
-2025-07-01,Financing status,Other,3.0000,,,,,2.7900
-2025-07-01,Financing status,PE-backed,1.9300,,,,,2.2500
-2025-07-01,Financing status,VC-backed,18.3400,,,,,40.6600
-2025-07-01,Overall,,4.5500,84.8000,939.7900,190.8200,1883.8800,6.2800
-2025-07-01,Sector,Construction,1.2500,,,,,1.7500
-2025-07-01,Sector,Finance and insurance,10.5900,,,,,10.8800
-2025-07-01,Sector,Health care,1.5000,,,,,3.3200
-2025-07-01,Sector,Manufacturing,2.5700,,,,,1.2200
-2025-07-01,Sector,"Professional, scientific, and technical services",9.4900,,,,,24.6800
-2025-07-01,Sector,Retail,2.6800,,,,,0.1500
-2025-07-01,Sector,Technology and media,20.2200,,,,,33.0800
-2025-08-01,Business size,Large,1.1600,,,,,17.4200
-2025-08-01,Business size,Medium,3.8800,,,,,32.2900
-2025-08-01,Business size,Small,10.0000,,,,,51.0200
-2025-08-01,Financing status,Other,3.1500,,,,,2.5200
-2025-08-01,Financing status,PE-backed,1.8500,,,,,2.4700
-2025-08-01,Financing status,VC-backed,20.2800,,,,,40.2700
-2025-08-01,Overall,,4.7300,87.0300,954.0000,192.0700,1844.7400,5.9000
-2025-08-01,Sector,Construction,1.3300,,,,,0.6300
-2025-08-01,Sector,Finance and insurance,10.5900,,,,,9.2900
-2025-08-01,Sector,Health care,1.5400,,,,,2.4900
-2025-08-01,Sector,Manufacturing,2.6700,,,,,0.9300
-2025-08-01,Sector,"Professional, scientific, and technical services",10.0000,,,,,25.6400
-2025-08-01,Sector,Retail,2.9800,,,,,2.1200
-2025-08-01,Sector,Technology and media,22.8700,,,,,34.7200
-2025-09-01,Business size,Large,1.2600,,,,,19.5700
-2025-09-01,Business size,Medium,3.8400,,,,,35.4300
-2025-09-01,Business size,Small,10.0000,,,,,52.3100
-2025-09-01,Financing status,Other,3.2700,,,,,4.2000
-2025-09-01,Financing status,PE-backed,1.9200,,,,,3.2800
-2025-09-01,Financing status,VC-backed,20.9200,,,,,45.2400
-2025-09-01,Overall,,4.9200,92.9900,1048.5200,194.6400,1973.7300,9.0700
-2025-09-01,Sector,Construction,1.3400,,,,,1.2700
-2025-09-01,Sector,Finance and insurance,11.7300,,,,,11.2300
-2025-09-01,Sector,Health care,1.5900,,,,,2.3600
-2025-09-01,Sector,Manufacturing,2.8600,,,,,1.0900
-2025-09-01,Sector,"Professional, scientific, and technical services",10.2300,,,,,30.0900
-2025-09-01,Sector,Retail,3.0700,,,,,3.2100
-2025-09-01,Sector,Technology and media,22.9300,,,,,37.0500
-2025-10-01,Business size,Large,1.2900,,,,,22.4600
-2025-10-01,Business size,Medium,4.1800,,,,,39.7400
-2025-10-01,Business size,Small,10.5000,,,,,59.7000
-2025-10-01,Financing status,Other,3.3300,,,,,4.1300
-2025-10-01,Financing status,PE-backed,2.0800,,,,,3.3700
-2025-10-01,Financing status,VC-backed,23.8900,,,,,58.5600
-2025-10-01,Overall,,5.1600,103.2400,1148.5000,220.8900,2523.9700,9.8400
-2025-10-01,Sector,Construction,1.4100,,,,,0.5900
-2025-10-01,Sector,Finance and insurance,12.5000,,,,,11.5200
-2025-10-01,Sector,Health care,1.6700,,,,,2.0900
-2025-10-01,Sector,Manufacturing,3.0600,,,,,1.1600
-2025-10-01,Sector,"Professional, scientific, and technical services",11.0900,,,,,34.0100
-2025-10-01,Sector,Retail,2.9500,,,,,2.4100
-2025-10-01,Sector,Technology and media,26.1800,,,,,62.6700
-2025-11-01,Business size,Large,1.2300,,,,,20.0800
-2025-11-01,Business size,Medium,4.0400,,,,,36.7800
-2025-11-01,Business size,Small,10.5000,,,,,55.3400
-2025-11-01,Financing status,Other,3.3300,,,,,3.8700
-2025-11-01,Financing status,PE-backed,1.9900,,,,,2.9800
-2025-11-01,Financing status,VC-backed,23.6600,,,,,49.7700
-2025-11-01,Overall,,5.0800,100.4600,1047.4900,217.4800,2192.1000,8.6900
-2025-11-01,Sector,Construction,1.4700,,,,,0.6100
-2025-11-01,Sector,Finance and insurance,12.0100,,,,,10.9100
-2025-11-01,Sector,Health care,1.5400,,,,,1.7600
-2025-11-01,Sector,Manufacturing,3.2000,,,,,1.2500
-2025-11-01,Sector,"Professional, scientific, and technical services",11.3400,,,,,31.3400
-2025-11-01,Sector,Retail,3.1500,,,,,2.9300
-2025-11-01,Sector,Technology and media,25.5700,,,,,46.3300
-2025-12-01,Business size,Large,1.3000,,,,,29.5100
-2025-12-01,Business size,Medium,4.2200,,,,,46.6200
-2025-12-01,Business size,Small,10.8900,,,,,60.5300
-2025-12-01,Financing status,Other,3.4800,,,,,4.5300
-2025-12-01,Financing status,PE-backed,2.2200,,,,,3.5200
-2025-12-01,Financing status,VC-backed,26.4300,,,,,72.8100
-2025-12-01,Overall,,5.2600,109.6300,1394.4000,241.4600,2972.9500,11.2600
-2025-12-01,Sector,Construction,1.5400,,,,,0.7500
-2025-12-01,Sector,Finance and insurance,12.7200,,,,,13.3800
-2025-12-01,Sector,Health care,1.7000,,,,,2.6300
-2025-12-01,Sector,Manufacturing,3.1000,,,,,1.4900
-2025-12-01,Sector,"Professional, scientific, and technical services",12.2300,,,,,41.7000
-2025-12-01,Sector,Retail,3.3300,,,,,3.8000
-2025-12-01,Sector,Technology and media,28.1100,,,,,63.1500
-2026-01-01,Business size,Large,1.3900,,,,,29.7200
-2026-01-01,Business size,Medium,4.6200,,,,,46.6200
-2026-01-01,Business size,Small,12.1000,,,,,69.8300
-2026-01-01,Financing status,Other,3.8100,,,,,4.5600
-2026-01-01,Financing status,PE-backed,2.4400,,,,,4.3000
-2026-01-01,Financing status,VC-backed,31.4600,,,,,76.2400
-2026-01-01,Overall,,5.8600,135.2800,1341.3300,281.2300,2590.6700,11.0300
-2026-01-01,Sector,Accommodation and food services,1.0700,,,,,0.2100
-2026-01-01,Sector,Construction,1.6700,,,,,1.0200
-2026-01-01,Sector,Finance and insurance,15.7400,,,,,15.3000
+2023-09-01,Business size,Large,0.4900,,,,,4.9800
+2023-09-01,Business size,Medium,1.7800,,,,,11.6500
+2023-09-01,Business size,Small,5.0000,,,,,25.8500
+2023-09-01,Financing status,Other,2.1300,,,,,2.6900
+2023-09-01,Financing status,PE-backed,0.7600,,,,,2.9400
+2023-09-01,Financing status,VC-backed,3.4000,,,,,8.6200
+2023-09-01,Overall,,2.5000,32.3900,369.7200,70.0400,874.8900,4.1400
+2023-09-01,Sector,Finance and insurance,3.3300,,,,,6.7700
+2023-09-01,Sector,"Professional, scientific, and technical services",2.5000,,,,,6.6900
+2023-09-01,Sector,Technology and media,4.4200,,,,,7.5200
+2023-10-01,Business size,Large,0.5700,,,,,4.8900
+2023-10-01,Business size,Medium,1.9200,,,,,12.4600
+2023-10-01,Business size,Small,5.0000,,,,,23.1400
+2023-10-01,Financing status,Other,2.2000,,,,,2.1600
+2023-10-01,Financing status,PE-backed,0.7900,,,,,2.0100
+2023-10-01,Financing status,VC-backed,3.7000,,,,,12.2500
+2023-10-01,Overall,,2.5800,31.4700,372.6900,73.0500,893.1600,4.3300
+2023-10-01,Sector,Finance and insurance,3.4100,,,,,7.4600
+2023-10-01,Sector,"Professional, scientific, and technical services",2.5000,,,,,10.0500
+2023-10-01,Sector,Technology and media,4.5200,,,,,8.6000
+2023-11-01,Business size,Large,0.5600,,,,,6.7000
+2023-11-01,Business size,Medium,2.0000,,,,,13.7300
+2023-11-01,Business size,Small,5.0000,,,,,24.2000
+2023-11-01,Financing status,Other,2.2700,,,,,3.1300
+2023-11-01,Financing status,PE-backed,0.7200,,,,,1.9000
+2023-11-01,Financing status,VC-backed,4.0000,,,,,12.9600
+2023-11-01,Overall,,2.7200,35.3600,469.4400,81.1800,752.9600,5.2500
+2023-11-01,Sector,Finance and insurance,3.3700,,,,,9.3300
+2023-11-01,Sector,Manufacturing,1.2900,,,,,0.6100
+2023-11-01,Sector,"Professional, scientific, and technical services",2.7300,,,,,10.0400
+2023-11-01,Sector,Technology and media,5.0000,,,,,11.8100
+2023-12-01,Business size,Large,0.5700,,,,,5.9000
+2023-12-01,Business size,Medium,2.0000,,,,,11.9200
+2023-12-01,Business size,Small,5.0000,,,,,23.6700
+2023-12-01,Financing status,Other,2.2200,,,,,2.8800
+2023-12-01,Financing status,PE-backed,0.8100,,,,,1.7200
+2023-12-01,Financing status,VC-backed,4.1200,,,,,12.3800
+2023-12-01,Overall,,2.6700,33.0600,369.3200,73.8400,758.7500,4.7600
+2023-12-01,Sector,Finance and insurance,3.3300,,,,,6.5500
+2023-12-01,Sector,Health care,1.2800,,,,,0.9600
+2023-12-01,Sector,Manufacturing,1.3300,,,,,0.7900
+2023-12-01,Sector,"Professional, scientific, and technical services",2.7300,,,,,8.4700
+2023-12-01,Sector,Technology and media,5.1800,,,,,11.2300
+2024-01-01,Business size,Large,0.6400,,,,,6.3300
+2024-01-01,Business size,Medium,2.2800,,,,,13.8600
+2024-01-01,Business size,Small,5.4500,,,,,26.3900
+2024-01-01,Financing status,Other,2.3600,,,,,2.7500
+2024-01-01,Financing status,PE-backed,0.8700,,,,,2.8700
+2024-01-01,Financing status,VC-backed,4.4100,,,,,13.3500
+2024-01-01,Overall,,2.8600,38.7100,491.1900,86.9200,880.7000,4.9600
+2024-01-01,Sector,Finance and insurance,3.4600,,,,,4.9200
+2024-01-01,Sector,Health care,1.2500,,,,,1.0800
+2024-01-01,Sector,Manufacturing,1.3600,,,,,0.8600
+2024-01-01,Sector,"Professional, scientific, and technical services",3.1600,,,,,6.8500
+2024-01-01,Sector,Technology and media,5.6900,,,,,14.1500
+2024-02-01,Business size,Large,0.6600,,,,,5.9000
+2024-02-01,Business size,Medium,2.2900,,,,,13.2500
+2024-02-01,Business size,Small,5.7100,,,,,28.1500
+2024-02-01,Financing status,Other,2.4200,,,,,2.9300
+2024-02-01,Financing status,PE-backed,0.9700,,,,,2.6200
+2024-02-01,Financing status,VC-backed,4.9300,,,,,13.8200
+2024-02-01,Overall,,2.9300,40.0600,437.3200,83.0600,945.2900,5.0100
+2024-02-01,Sector,Finance and insurance,3.5600,,,,,5.6300
+2024-02-01,Sector,Health care,1.2500,,,,,0.7400
+2024-02-01,Sector,Manufacturing,1.4300,,,,,0.9600
+2024-02-01,Sector,"Professional, scientific, and technical services",3.3300,,,,,7.3200
+2024-02-01,Sector,Technology and media,6.0600,,,,,13.4500
+2024-03-01,Business size,Large,0.7700,,,,,7.4800
+2024-03-01,Business size,Medium,2.3800,,,,,14.3300
+2024-03-01,Business size,Small,6.2600,,,,,33.9700
+2024-03-01,Financing status,Other,2.5000,,,,,3.5900
+2024-03-01,Financing status,PE-backed,1.0000,,,,,2.5300
+2024-03-01,Financing status,VC-backed,5.8200,,,,,15.2300
+2024-03-01,Overall,,3.1800,47.7700,513.3100,103.4900,1240.5600,5.7900
+2024-03-01,Sector,Finance and insurance,3.5600,,,,,4.8100
+2024-03-01,Sector,Health care,1.2600,,,,,1.0800
+2024-03-01,Sector,Manufacturing,1.4300,,,,,1.1400
+2024-03-01,Sector,"Professional, scientific, and technical services",3.7100,,,,,10.5400
+2024-03-01,Sector,Technology and media,7.3600,,,,,15.3300
+2024-04-01,Business size,Large,0.8200,,,,,7.9700
+2024-04-01,Business size,Medium,2.3900,,,,,14.8400
+2024-04-01,Business size,Small,6.1300,,,,,34.6000
+2024-04-01,Financing status,Other,2.4200,,,,,3.3800
+2024-04-01,Financing status,PE-backed,1.0500,,,,,2.8000
+2024-04-01,Financing status,VC-backed,5.9500,,,,,22.6500
+2024-04-01,Overall,,3.1500,44.8800,583.1700,97.5500,1507.0300,6.6000
+2024-04-01,Sector,Finance and insurance,4.0900,,,,,6.9300
+2024-04-01,Sector,Health care,1.3200,,,,,0.7900
+2024-04-01,Sector,Manufacturing,1.4800,,,,,1.1200
+2024-04-01,Sector,"Professional, scientific, and technical services",3.5700,,,,,12.5600
+2024-04-01,Sector,Technology and media,7.0400,,,,,22.0100
+2024-05-01,Business size,Large,0.7500,,,,,8.3900
+2024-05-01,Business size,Medium,2.5400,,,,,17.3100
+2024-05-01,Business size,Small,6.3500,,,,,32.1800
+2024-05-01,Financing status,Other,2.4100,,,,,3.5900
+2024-05-01,Financing status,PE-backed,1.0200,,,,,2.7900
+2024-05-01,Financing status,VC-backed,6.4000,,,,,22.3900
+2024-05-01,Overall,,3.2100,46.6000,587.2100,101.9900,1360.3400,6.6800
+2024-05-01,Sector,Finance and insurance,4.0000,,,,,8.2800
+2024-05-01,Sector,Health care,1.2500,,,,,1.0800
+2024-05-01,Sector,Manufacturing,1.6700,,,,,1.4200
+2024-05-01,Sector,"Professional, scientific, and technical services",3.7500,,,,,12.5500
+2024-05-01,Sector,Technology and media,7.2800,,,,,18.5400
+2024-06-01,Business size,Large,0.7800,,,,,8.1200
+2024-06-01,Business size,Medium,2.2700,,,,,15.2300
+2024-06-01,Business size,Small,6.2900,,,,,34.6100
+2024-06-01,Financing status,Other,2.4000,,,,,3.2000
+2024-06-01,Financing status,PE-backed,0.9000,,,,,1.8000
+2024-06-01,Financing status,VC-backed,6.2200,,,,,24.0500
+2024-06-01,Overall,,3.1000,44.6600,633.4600,99.4900,1389.1900,6.3600
+2024-06-01,Sector,Finance and insurance,3.7300,,,,,5.2100
+2024-06-01,Sector,Health care,1.2700,,,,,1.0700
+2024-06-01,Sector,Manufacturing,1.4300,,,,,1.2400
+2024-06-01,Sector,"Professional, scientific, and technical services",3.9100,,,,,15.9600
+2024-06-01,Sector,Technology and media,7.3400,,,,,22.4000
+2024-07-01,Business size,Large,0.7600,,,,,9.5900
+2024-07-01,Business size,Medium,2.2600,,,,,15.7200
+2024-07-01,Business size,Small,6.0100,,,,,35.3700
+2024-07-01,Financing status,Other,2.4400,,,,,3.5200
+2024-07-01,Financing status,PE-backed,0.9700,,,,,2.9900
+2024-07-01,Financing status,VC-backed,6.2100,,,,,28.0100
+2024-07-01,Overall,,3.0800,45.5800,717.0500,105.1100,1590.4900,7.4400
+2024-07-01,Sector,Finance and insurance,3.8900,,,,,6.3700
+2024-07-01,Sector,Health care,1.2800,,,,,1.4500
+2024-07-01,Sector,Manufacturing,1.4300,,,,,1.1000
+2024-07-01,Sector,"Professional, scientific, and technical services",3.8300,,,,,11.7900
+2024-07-01,Sector,Technology and media,7.6000,,,,,24.4600
+2024-08-01,Business size,Large,0.8000,,,,,9.3900
+2024-08-01,Business size,Medium,2.2900,,,,,18.2100
+2024-08-01,Business size,Small,6.3000,,,,,35.2200
+2024-08-01,Financing status,Other,2.3800,,,,,3.7300
+2024-08-01,Financing status,PE-backed,0.9700,,,,,2.4800
+2024-08-01,Financing status,VC-backed,6.8000,,,,,26.3800
+2024-08-01,Overall,,3.0500,45.4700,719.8900,102.4200,1530.1200,7.3600
+2024-08-01,Sector,Finance and insurance,3.6800,,,,,7.5900
+2024-08-01,Sector,Health care,1.1800,,,,,1.3000
+2024-08-01,Sector,Manufacturing,1.4300,,,,,1.1600
+2024-08-01,Sector,"Professional, scientific, and technical services",4.0000,,,,,12.3400
+2024-08-01,Sector,Technology and media,7.8500,,,,,26.1800
+2024-09-01,Business size,Large,0.7200,,,,,7.4200
+2024-09-01,Business size,Medium,2.3800,,,,,16.4900
+2024-09-01,Business size,Small,6.4200,,,,,34.4100
+2024-09-01,Financing status,Other,2.3700,,,,,3.1500
+2024-09-01,Financing status,PE-backed,0.9700,,,,,1.7300
+2024-09-01,Financing status,VC-backed,6.9400,,,,,26.9600
+2024-09-01,Overall,,3.1300,46.2600,617.7400,104.7800,1488.3200,6.0300
+2024-09-01,Sector,Finance and insurance,4.1400,,,,,5.8100
+2024-09-01,Sector,Health care,1.2800,,,,,1.1500
+2024-09-01,Sector,Manufacturing,1.5000,,,,,1.2100
+2024-09-01,Sector,"Professional, scientific, and technical services",4.2400,,,,,13.4000
+2024-09-01,Sector,Technology and media,7.8000,,,,,22.7000
+2024-10-01,Business size,Large,0.7900,,,,,9.8900
+2024-10-01,Business size,Medium,2.4800,,,,,17.1600
+2024-10-01,Business size,Small,6.4900,,,,,36.6800
+2024-10-01,Financing status,Other,2.4700,,,,,3.6700
+2024-10-01,Financing status,PE-backed,1.1100,,,,,2.2900
+2024-10-01,Financing status,VC-backed,7.4400,,,,,27.4600
+2024-10-01,Overall,,3.3000,47.6000,665.9300,112.0100,1352.3800,7.1700
+2024-10-01,Sector,Finance and insurance,4.3900,,,,,6.6500
+2024-10-01,Sector,Health care,1.3200,,,,,1.8700
+2024-10-01,Sector,Manufacturing,1.7700,,,,,1.3500
+2024-10-01,Sector,"Professional, scientific, and technical services",4.4500,,,,,15.0600
+2024-10-01,Sector,Technology and media,8.5200,,,,,26.0800
+2024-11-01,Business size,Large,0.7100,,,,,10.4900
+2024-11-01,Business size,Medium,2.4800,,,,,17.5000
+2024-11-01,Business size,Small,6.6700,,,,,38.0600
+2024-11-01,Financing status,Other,2.4800,,,,,3.7500
+2024-11-01,Financing status,PE-backed,1.1500,,,,,2.1400
+2024-11-01,Financing status,VC-backed,7.6700,,,,,29.9200
+2024-11-01,Overall,,3.3300,47.5700,776.1900,108.6700,1456.7000,7.6700
+2024-11-01,Sector,Finance and insurance,4.7100,,,,,6.6500
+2024-11-01,Sector,Health care,1.3000,,,,,1.3800
+2024-11-01,Sector,Manufacturing,1.7900,,,,,0.9900
+2024-11-01,Sector,"Professional, scientific, and technical services",4.4400,,,,,14.9600
+2024-11-01,Sector,Retail,1.6900,,,,,2.1000
+2024-11-01,Sector,Technology and media,9.2000,,,,,31.0400
+2024-12-01,Business size,Large,0.7700,,,,,10.0600
+2024-12-01,Business size,Medium,2.5000,,,,,20.4000
+2024-12-01,Business size,Small,6.6700,,,,,37.8000
+2024-12-01,Financing status,Other,2.4400,,,,,4.0400
+2024-12-01,Financing status,PE-backed,1.0700,,,,,2.0100
+2024-12-01,Financing status,VC-backed,8.3500,,,,,28.7400
+2024-12-01,Overall,,3.3300,52.4000,772.3900,119.4400,1730.0100,7.4800
+2024-12-01,Sector,Finance and insurance,4.8800,,,,,6.3600
+2024-12-01,Sector,Health care,1.1800,,,,,1.8700
+2024-12-01,Sector,Manufacturing,1.8200,,,,,1.6100
+2024-12-01,Sector,"Professional, scientific, and technical services",4.6200,,,,,13.8400
+2024-12-01,Sector,Retail,1.7800,,,,,2.7700
+2024-12-01,Sector,Technology and media,9.9200,,,,,34.2800
+2025-01-01,Business size,Large,0.8200,,,,,12.1800
+2025-01-01,Business size,Medium,2.5400,,,,,20.6800
+2025-01-01,Business size,Small,7.6400,,,,,41.4300
+2025-01-01,Financing status,Other,2.5100,,,,,4.3300
+2025-01-01,Financing status,PE-backed,1.2300,,,,,2.4700
+2025-01-01,Financing status,VC-backed,9.3100,,,,,31.7300
+2025-01-01,Overall,,3.5300,60.7100,711.9300,139.9500,1825.7400,8.0600
+2025-01-01,Sector,Finance and insurance,5.3600,,,,,6.8000
+2025-01-01,Sector,Health care,1.3400,,,,,2.3700
+2025-01-01,Sector,Manufacturing,1.8400,,,,,1.4000
+2025-01-01,Sector,"Professional, scientific, and technical services",5.3300,,,,,15.9300
+2025-01-01,Sector,Retail,1.9700,,,,,2.2900
+2025-01-01,Sector,Technology and media,11.4300,,,,,35.8200
+2025-02-01,Business size,Large,0.8400,,,,,11.5000
+2025-02-01,Business size,Medium,2.8800,,,,,21.2900
+2025-02-01,Business size,Small,8.9300,,,,,42.6700
+2025-02-01,Financing status,Other,2.6800,,,,,4.3200
+2025-02-01,Financing status,PE-backed,1.2500,,,,,1.9900
+2025-02-01,Financing status,VC-backed,10.8000,,,,,35.5900
+2025-02-01,Overall,,3.8800,64.6400,785.6900,137.8800,1952.7700,8.2000
+2025-02-01,Sector,Construction,1.1000,,,,,1.1800
+2025-02-01,Sector,Finance and insurance,6.3300,,,,,7.1800
+2025-02-01,Sector,Health care,1.3300,,,,,1.9300
+2025-02-01,Sector,Manufacturing,2.1200,,,,,1.8800
+2025-02-01,Sector,"Professional, scientific, and technical services",6.2200,,,,,18.0300
+2025-02-01,Sector,Retail,1.8200,,,,,1.8500
+2025-02-01,Sector,Technology and media,12.1400,,,,,39.4300
+2025-03-01,Business size,Large,0.9700,,,,,14.8700
+2025-03-01,Business size,Medium,2.9700,,,,,21.9600
+2025-03-01,Business size,Small,9.1400,,,,,39.7500
+2025-03-01,Financing status,Other,2.8600,,,,,4.8100
+2025-03-01,Financing status,PE-backed,1.4000,,,,,3.1000
+2025-03-01,Financing status,VC-backed,11.6900,,,,,38.2800
+2025-03-01,Overall,,4.0000,66.7200,790.8400,141.9000,2136.6300,9.0900
+2025-03-01,Sector,Construction,1.1500,,,,,1.6500
+2025-03-01,Sector,Finance and insurance,7.2200,,,,,8.1600
+2025-03-01,Sector,Health care,1.4300,,,,,2.8900
+2025-03-01,Sector,Manufacturing,2.3200,,,,,1.6200
+2025-03-01,Sector,"Professional, scientific, and technical services",6.7700,,,,,22.9300
+2025-03-01,Sector,Retail,2.1300,,,,,2.8800
+2025-03-01,Sector,Technology and media,13.1400,,,,,45.1700
+2025-04-01,Business size,Large,0.8900,,,,,15.8200
+2025-04-01,Business size,Medium,2.9400,,,,,23.8700
+2025-04-01,Business size,Small,8.5300,,,,,43.9100
+2025-04-01,Financing status,Other,2.7200,,,,,4.4900
+2025-04-01,Financing status,PE-backed,1.5900,,,,,2.7900
+2025-04-01,Financing status,VC-backed,12.5700,,,,,40.0500
+2025-04-01,Overall,,4.0000,68.6800,859.7200,154.9800,2122.6500,9.1900
+2025-04-01,Sector,Construction,1.1800,,,,,1.9400
+2025-04-01,Sector,Finance and insurance,7.2600,,,,,6.3500
+2025-04-01,Sector,Health care,1.3500,,,,,1.4400
+2025-04-01,Sector,Manufacturing,2.2800,,,,,1.8600
+2025-04-01,Sector,"Professional, scientific, and technical services",7.3000,,,,,26.9400
+2025-04-01,Sector,Retail,1.9900,,,,,1.3700
+2025-04-01,Sector,Technology and media,13.3900,,,,,45.0400
+2025-05-01,Business size,Large,1.0100,,,,,16.4100
+2025-05-01,Business size,Medium,3.1700,,,,,25.2300
+2025-05-01,Business size,Small,9.4600,,,,,46.4700
+2025-05-01,Financing status,Other,2.8600,,,,,5.1200
+2025-05-01,Financing status,PE-backed,1.6100,,,,,3.0800
+2025-05-01,Financing status,VC-backed,14.5100,,,,,45.3300
+2025-05-01,Overall,,4.1300,73.4800,901.4800,163.3900,2057.1100,10.3700
+2025-05-01,Sector,Construction,1.1800,,,,,1.6800
+2025-05-01,Sector,Finance and insurance,8.9000,,,,,7.6100
+2025-05-01,Sector,Health care,1.5400,,,,,2.1100
+2025-05-01,Sector,Manufacturing,2.3000,,,,,2.6800
+2025-05-01,Sector,"Professional, scientific, and technical services",8.0000,,,,,27.9600
+2025-05-01,Sector,Retail,2.3500,,,,,1.6500
+2025-05-01,Sector,Technology and media,16.0000,,,,,58.3500
+2025-06-01,Business size,Large,1.1300,,,,,15.6200
+2025-06-01,Business size,Medium,3.3100,,,,,26.7200
+2025-06-01,Business size,Small,9.7000,,,,,48.5000
+2025-06-01,Financing status,Other,2.9000,,,,,5.2800
+2025-06-01,Financing status,PE-backed,1.8400,,,,,3.5800
+2025-06-01,Financing status,VC-backed,16.6800,,,,,40.7200
+2025-06-01,Overall,,4.2700,76.8100,873.7100,166.6900,2017.4100,9.8500
+2025-06-01,Sector,Construction,1.1800,,,,,1.7400
+2025-06-01,Sector,Finance and insurance,9.9500,,,,,8.5300
+2025-06-01,Sector,Health care,1.6100,,,,,2.1500
+2025-06-01,Sector,Manufacturing,2.4200,,,,,2.8200
+2025-06-01,Sector,"Professional, scientific, and technical services",8.3600,,,,,22.9200
+2025-06-01,Sector,Retail,2.8400,,,,,2.6600
+2025-06-01,Sector,Technology and media,18.7500,,,,,42.0800
+2025-07-01,Business size,Large,1.1100,,,,,18.7600
+2025-07-01,Business size,Medium,3.8100,,,,,32.8300
+2025-07-01,Business size,Small,10.0000,,,,,50.9100
+2025-07-01,Financing status,Other,3.0000,,,,,5.9400
+2025-07-01,Financing status,PE-backed,1.8800,,,,,3.2700
+2025-07-01,Financing status,VC-backed,18.7800,,,,,53.7200
+2025-07-01,Overall,,4.5500,85.0400,989.8100,194.3000,2176.8600,11.7800
+2025-07-01,Sector,Construction,1.2500,,,,,1.7300
+2025-07-01,Sector,Finance and insurance,10.6700,,,,,10.9500
+2025-07-01,Sector,Health care,1.5200,,,,,3.1700
+2025-07-01,Sector,Manufacturing,2.5600,,,,,2.3900
+2025-07-01,Sector,"Professional, scientific, and technical services",9.5500,,,,,27.3700
+2025-07-01,Sector,Retail,2.5900,,,,,2.1000
+2025-07-01,Sector,Technology and media,20.6500,,,,,50.8600
+2025-08-01,Business size,Large,1.2000,,,,,18.2900
+2025-08-01,Business size,Medium,3.8400,,,,,33.5800
+2025-08-01,Business size,Small,10.0000,,,,,51.0900
+2025-08-01,Financing status,Other,3.1600,,,,,3.2200
+2025-08-01,Financing status,PE-backed,1.8200,,,,,3.6100
+2025-08-01,Financing status,VC-backed,20.4300,,,,,58.1100
+2025-08-01,Overall,,4.7100,87.3100,988.6700,195.5300,2417.8800,7.4700
+2025-08-01,Sector,Construction,1.3300,,,,,0.6200
+2025-08-01,Sector,Finance and insurance,10.8100,,,,,9.4200
+2025-08-01,Sector,Health care,1.5400,,,,,2.4800
+2025-08-01,Sector,Manufacturing,2.7800,,,,,2.4600
+2025-08-01,Sector,"Professional, scientific, and technical services",10.0000,,,,,31.2500
+2025-08-01,Sector,Retail,2.8600,,,,,2.1300
+2025-08-01,Sector,Technology and media,22.7400,,,,,59.7100
+2025-09-01,Business size,Large,1.3100,,,,,20.9100
+2025-09-01,Business size,Medium,3.8200,,,,,35.5000
+2025-09-01,Business size,Small,10.1300,,,,,53.9300
+2025-09-01,Financing status,Other,3.3300,,,,,5.9600
+2025-09-01,Financing status,PE-backed,1.9100,,,,,4.3700
+2025-09-01,Financing status,VC-backed,20.9400,,,,,64.6800
+2025-09-01,Overall,,4.9000,93.7900,1137.6600,196.0100,2301.1400,12.7300
+2025-09-01,Sector,Construction,1.3300,,,,,1.2000
+2025-09-01,Sector,Finance and insurance,11.6700,,,,,11.6000
+2025-09-01,Sector,Health care,1.6200,,,,,2.4200
+2025-09-01,Sector,Manufacturing,2.8600,,,,,2.8100
+2025-09-01,Sector,"Professional, scientific, and technical services",10.4800,,,,,35.5100
+2025-09-01,Sector,Retail,3.0800,,,,,3.2200
+2025-09-01,Sector,Technology and media,23.4000,,,,,55.9300
+2025-10-01,Business size,Large,1.3400,,,,,23.5000
+2025-10-01,Business size,Medium,4.1200,,,,,39.0300
+2025-10-01,Business size,Small,10.5300,,,,,59.9700
+2025-10-01,Financing status,Other,3.3400,,,,,5.7800
+2025-10-01,Financing status,PE-backed,2.0400,,,,,4.5600
+2025-10-01,Financing status,VC-backed,23.6200,,,,,77.0100
+2025-10-01,Overall,,5.1500,103.6600,1201.0800,223.1700,2811.1300,13.1800
+2025-10-01,Sector,Construction,1.4100,,,,,0.5800
+2025-10-01,Sector,Finance and insurance,12.5000,,,,,11.6400
+2025-10-01,Sector,Health care,1.6700,,,,,2.1200
+2025-10-01,Sector,Manufacturing,3.0200,,,,,2.9300
+2025-10-01,Sector,"Professional, scientific, and technical services",11.0600,,,,,36.5300
+2025-10-01,Sector,Retail,3.0000,,,,,2.4700
+2025-10-01,Sector,Technology and media,26.3100,,,,,97.0700
+2025-11-01,Business size,Large,1.2700,,,,,21.3200
+2025-11-01,Business size,Medium,3.9900,,,,,36.6600
+2025-11-01,Business size,Small,10.5200,,,,,55.2900
+2025-11-01,Financing status,Other,3.3300,,,,,5.2500
+2025-11-01,Financing status,PE-backed,2.0000,,,,,3.9300
+2025-11-01,Financing status,VC-backed,23.9300,,,,,67.4000
+2025-11-01,Overall,,5.0900,100.2600,1099.9700,220.6900,2521.3500,11.5500
+2025-11-01,Sector,Construction,1.4700,,,,,0.6000
+2025-11-01,Sector,Finance and insurance,12.0500,,,,,11.1200
+2025-11-01,Sector,Health care,1.6000,,,,,1.7800
+2025-11-01,Sector,Manufacturing,3.2000,,,,,2.9600
+2025-11-01,Sector,"Professional, scientific, and technical services",11.3700,,,,,33.5200
+2025-11-01,Sector,Retail,3.1900,,,,,3.0000
+2025-11-01,Sector,Technology and media,25.8000,,,,,72.7700
+2025-12-01,Business size,Large,1.3500,,,,,31.1300
+2025-12-01,Business size,Medium,4.1400,,,,,47.2300
+2025-12-01,Business size,Small,10.9700,,,,,61.7700
+2025-12-01,Financing status,Other,3.4800,,,,,6.1700
+2025-12-01,Financing status,PE-backed,2.1500,,,,,4.5300
+2025-12-01,Financing status,VC-backed,26.5300,,,,,98.8700
+2025-12-01,Overall,,5.2600,110.0000,1486.7700,247.5600,3333.5400,14.8600
+2025-12-01,Sector,Construction,1.5400,,,,,0.7300
+2025-12-01,Sector,Finance and insurance,12.6700,,,,,13.6900
+2025-12-01,Sector,Health care,1.7500,,,,,2.6900
+2025-12-01,Sector,Manufacturing,3.1500,,,,,3.7000
+2025-12-01,Sector,"Professional, scientific, and technical services",12.1200,,,,,44.7300
+2025-12-01,Sector,Retail,3.3300,,,,,3.6700
+2025-12-01,Sector,Technology and media,27.7600,,,,,96.6000
+2026-01-01,Business size,Large,1.4300,,,,,32.7200
+2026-01-01,Business size,Medium,4.5500,,,,,47.9100
+2026-01-01,Business size,Small,12.1700,,,,,70.8800
+2026-01-01,Financing status,Other,3.8400,,,,,5.8800
+2026-01-01,Financing status,PE-backed,2.4400,,,,,5.3500
+2026-01-01,Financing status,VC-backed,31.6400,,,,,99.9100
+2026-01-01,Overall,,5.8600,135.9600,1458.6100,284.5300,2926.9700,14.1100
+2026-01-01,Sector,Accommodation and food services,1.0700,,,,,0.4200
+2026-01-01,Sector,Construction,1.6700,,,,,1.0400
+2026-01-01,Sector,Finance and insurance,15.8800,,,,,15.2300
 2026-01-01,Sector,Health care,1.8300,,,,,2.8900
-2026-01-01,Sector,Manufacturing,3.4800,,,,,1.9800
-2026-01-01,Sector,"Professional, scientific, and technical services",14.0500,,,,,33.3100
-2026-01-01,Sector,Retail,3.7700,,,,,3.7600
-2026-01-01,Sector,Technology and media,33.8100,,,,,57.6500
-2026-02-01,Business size,Large,1.6600,,,,,30.7400
-2026-02-01,Business size,Medium,5.4500,,,,,59.1800
-2026-02-01,Business size,Small,14.6300,,,,,79.7900
-2026-02-01,Financing status,Other,4.5000,,,,,5.7500
-2026-02-01,Financing status,PE-backed,2.7900,,,,,4.2700
-2026-02-01,Financing status,VC-backed,37.4200,,,,,83.0000
-2026-02-01,Overall,,6.9600,152.8100,1669.0500,331.8400,3004.9100,13.3300
-2026-02-01,Sector,Accommodation and food services,1.1500,,,,,0.2700
-2026-02-01,Sector,Construction,1.8300,,,,,2.1000
-2026-02-01,Sector,Finance and insurance,20.0000,,,,,18.3500
-2026-02-01,Sector,Health care,2.2200,,,,,3.3500
-2026-02-01,Sector,Manufacturing,4.2900,,,,,2.1600
-2026-02-01,Sector,"Professional, scientific, and technical services",16.5000,,,,,36.2600
-2026-02-01,Sector,Retail,4.2400,,,,,4.3100
-2026-02-01,Sector,Technology and media,41.8100,,,,,63.3900
-2026-03-01,Business size,Large,2.1300,,,,,45.9000
-2026-03-01,Business size,Medium,6.6700,,,,,69.5100
-2026-03-01,Business size,Small,17.7200,,,,,100.4000
-2026-03-01,Financing status,Other,5.7100,,,,,5.6000
-2026-03-01,Financing status,PE-backed,4.0000,,,,,6.7800
-2026-03-01,Financing status,VC-backed,50.1100,,,,,131.5500
-2026-03-01,Overall,,8.7000,183.8800,2032.4900,398.3000,3591.4300,15.0900
-2026-03-01,Sector,Accommodation and food services,1.3300,,,,,0.4800
-2026-03-01,Sector,Construction,2.5300,,,,,1.8500
-2026-03-01,Sector,Finance and insurance,26.6400,,,,,16.5900
-2026-03-01,Sector,Health care,2.2200,,,,,4.4300
-2026-03-01,Sector,Manufacturing,5.6700,,,,,2.8100
-2026-03-01,Sector,"Professional, scientific, and technical services",21.2000,,,,,40.5100
-2026-03-01,Sector,Retail,6.2500,,,,,6.7900
-2026-03-01,Sector,Technology and media,52.0600,,,,,71.2700
-2026-04-01,Business size,Large,2.4700,,,,,50.1400
-2026-04-01,Business size,Medium,7.5000,,,,,82.3700
-2026-04-01,Business size,Small,19.5800,,,,,104.4800
-2026-04-01,Financing status,Other,6.4400,,,,,5.8200
-2026-04-01,Financing status,PE-backed,5.2600,,,,,7.5200
-2026-04-01,Financing status,VC-backed,58.5500,,,,,154.8200
-2026-04-01,Overall,,10.0000,200.0100,2196.3200,432.5700,4068.1300,15.9300
-2026-04-01,Sector,Accommodation and food services,1.6700,,,,,0.2400
-2026-04-01,Sector,Construction,3.0000,,,,,2.3400
-2026-04-01,Sector,Finance and insurance,30.8600,,,,,19.2300
-2026-04-01,Sector,Health care,2.3000,,,,,4.0600
-2026-04-01,Sector,Manufacturing,6.5600,,,,,3.7100
-2026-04-01,Sector,"Professional, scientific, and technical services",24.1500,,,,,55.5000
-2026-04-01,Sector,Retail,7.3400,,,,,5.5500
-2026-04-01,Sector,Technology and media,58.0500,,,,,75.7100
-2026-05-01,Business size,Large,2.7300,,,,,57.1300
-2026-05-01,Business size,Medium,7.8900,,,,,86.9800
-2026-05-01,Business size,Small,20.0000,,,,,115.6600
-2026-05-01,Financing status,Other,6.9000,,,,,6.0400
-2026-05-01,Financing status,PE-backed,5.9300,,,,,8.0700
-2026-05-01,Financing status,VC-backed,64.4100,,,,,156.8600
-2026-05-01,Overall,,10.5000,211.4900,2391.6900,465.3900,4567.8600,16.2400
-2026-05-01,Sector,Accommodation and food services,1.9000,,,,,0.3600
-2026-05-01,Sector,Construction,3.6400,,,,,2.4600
-2026-05-01,Sector,Finance and insurance,33.2700,,,,,20.9900
-2026-05-01,Sector,Health care,2.6200,,,,,6.4000
-2026-05-01,Sector,Manufacturing,7.2800,,,,,4.8700
-2026-05-01,Sector,"Professional, scientific, and technical services",26.5400,,,,,70.7100
-2026-05-01,Sector,Retail,8.3100,,,,,0.7900
-2026-05-01,Sector,Technology and media,64.6100,,,,,82.7400
-2026-06-01,Business size,Large,2.9300,,,,,63.9700
-2026-06-01,Business size,Medium,8.3700,,,,,98.5600
-2026-06-01,Business size,Small,20.6700,,,,,121.0600
-2026-06-01,Financing status,Other,7.3400,,,,,5.8000
-2026-06-01,Financing status,PE-backed,6.3100,,,,,9.0900
-2026-06-01,Financing status,VC-backed,69.2600,,,,,197.0700
-2026-06-01,Overall,,10.9300,224.7200,2743.3700,520.4800,4973.6200,17.1900
-2026-06-01,Sector,Accommodation and food services,1.8400,,,,,0.4600
-2026-06-01,Sector,Construction,3.8500,,,,,4.8100
-2026-06-01,Sector,Finance and insurance,34.4100,,,,,14.6200
-2026-06-01,Sector,Health care,2.6300,,,,,6.0400
-2026-06-01,Sector,Manufacturing,7.8900,,,,,5.0100
-2026-06-01,Sector,"Professional, scientific, and technical services",28.3900,,,,,57.3600
-2026-06-01,Sector,Retail,7.9900,,,,,0.8700
-2026-06-01,Sector,Technology and media,67.2500,,,,,113.2500
-2026-07-01,Business size,Large,3.3900,,,,,90.3900
-2026-07-01,Business size,Medium,9.2800,,,,,124.1500
-2026-07-01,Business size,Small,22.7900,,,,,154.3000
-2026-07-01,Financing status,Other,8.0000,,,,,7.6200
-2026-07-01,Financing status,PE-backed,7.3800,,,,,10.2700
-2026-07-01,Financing status,VC-backed,76.2900,,,,,258.3000
-2026-07-01,Overall,,11.9500,264.7700,3679.0700,650.0000,7400.5000,22.4300
-2026-07-01,Sector,Accommodation and food services,2.0000,,,,,0.5100
-2026-07-01,Sector,Construction,4.1400,,,,,5.0700
-2026-07-01,Sector,Finance and insurance,40.3600,,,,,23.6200
-2026-07-01,Sector,Health care,2.8000,,,,,5.9200
-2026-07-01,Sector,Manufacturing,8.8500,,,,,6.1600
-2026-07-01,Sector,"Professional, scientific, and technical services",32.2800,,,,,106.7800
-2026-07-01,Sector,Retail,8.6300,,,,,1.0200
-2026-07-01,Sector,Technology and media,79.2600,,,,,144.1800
+2026-01-01,Sector,Manufacturing,3.5000,,,,,4.7700
+2026-01-01,Sector,"Professional, scientific, and technical services",14.1700,,,,,35.7400
+2026-01-01,Sector,Retail,3.8600,,,,,3.8200
+2026-01-01,Sector,Technology and media,33.6800,,,,,91.3900
+2026-02-01,Business size,Large,1.7000,,,,,32.7300
+2026-02-01,Business size,Medium,5.3700,,,,,58.6100
+2026-02-01,Business size,Small,14.6300,,,,,82.0200
+2026-02-01,Financing status,Other,4.5000,,,,,6.9000
+2026-02-01,Financing status,PE-backed,2.7800,,,,,5.4700
+2026-02-01,Financing status,VC-backed,37.5100,,,,,105.9600
+2026-02-01,Overall,,6.9400,153.5400,1702.1300,336.6500,3112.5900,16.0400
+2026-02-01,Sector,Accommodation and food services,1.1600,,,,,0.5800
+2026-02-01,Sector,Construction,1.8200,,,,,2.0700
+2026-02-01,Sector,Finance and insurance,20.0000,,,,,18.6800
+2026-02-01,Sector,Health care,2.2200,,,,,3.3800
+2026-02-01,Sector,Manufacturing,4.3500,,,,,4.7700
+2026-02-01,Sector,"Professional, scientific, and technical services",16.6700,,,,,36.9500
+2026-02-01,Sector,Retail,4.2300,,,,,4.4000
+2026-02-01,Sector,Technology and media,41.3800,,,,,91.3500
+2026-03-01,Business size,Large,2.1600,,,,,47.3400
+2026-03-01,Business size,Medium,6.6700,,,,,69.4500
+2026-03-01,Business size,Small,17.6700,,,,,102.2500
+2026-03-01,Financing status,Other,5.7100,,,,,6.8200
+2026-03-01,Financing status,PE-backed,4.0500,,,,,8.2100
+2026-03-01,Financing status,VC-backed,49.8400,,,,,172.8600
+2026-03-01,Overall,,8.7000,185.5100,2116.7800,404.1200,4241.3100,18.2000
+2026-03-01,Sector,Accommodation and food services,1.3300,,,,,0.8700
+2026-03-01,Sector,Construction,2.5100,,,,,1.8400
+2026-03-01,Sector,Finance and insurance,26.3900,,,,,16.2200
+2026-03-01,Sector,Health care,2.2300,,,,,4.4700
+2026-03-01,Sector,Manufacturing,5.7100,,,,,6.4600
+2026-03-01,Sector,"Professional, scientific, and technical services",21.1000,,,,,47.6500
+2026-03-01,Sector,Retail,6.1000,,,,,6.9300
+2026-03-01,Sector,Technology and media,51.5600,,,,,97.7900
+2026-04-01,Business size,Large,2.5300,,,,,52.6700
+2026-04-01,Business size,Medium,7.4000,,,,,83.8900
+2026-04-01,Business size,Small,19.4800,,,,,108.1100
+2026-04-01,Financing status,Other,6.4400,,,,,7.5300
+2026-04-01,Financing status,PE-backed,5.2200,,,,,9.0300
+2026-04-01,Financing status,VC-backed,58.6100,,,,,202.1700
+2026-04-01,Overall,,10.0000,200.0000,2344.1000,432.8900,4436.3200,20.0700
+2026-04-01,Sector,Accommodation and food services,1.6700,,,,,0.8000
+2026-04-01,Sector,Construction,2.9500,,,,,2.3200
+2026-04-01,Sector,Finance and insurance,30.3800,,,,,19.6100
+2026-04-01,Sector,Health care,2.3800,,,,,4.1400
+2026-04-01,Sector,Manufacturing,6.6700,,,,,8.2900
+2026-04-01,Sector,"Professional, scientific, and technical services",24.0400,,,,,58.0500
+2026-04-01,Sector,Retail,7.1800,,,,,5.4400
+2026-04-01,Sector,Technology and media,57.0000,,,,,103.1800
+2026-05-01,Business size,Large,2.7800,,,,,60.1500
+2026-05-01,Business size,Medium,7.8700,,,,,86.0300
+2026-05-01,Business size,Small,20.0000,,,,,118.3000
+2026-05-01,Financing status,Other,6.8800,,,,,7.2200
+2026-05-01,Financing status,PE-backed,6.0600,,,,,9.8200
+2026-05-01,Financing status,VC-backed,63.7200,,,,,214.3800
+2026-05-01,Overall,,10.4300,211.1900,2466.6000,465.2200,4782.2300,19.2900
+2026-05-01,Sector,Accommodation and food services,1.9000,,,,,0.9000
+2026-05-01,Sector,Construction,3.6400,,,,,2.4800
+2026-05-01,Sector,Finance and insurance,33.2300,,,,,21.1600
+2026-05-01,Sector,Health care,2.6300,,,,,6.4900
+2026-05-01,Sector,Manufacturing,7.3800,,,,,10.1200
+2026-05-01,Sector,"Professional, scientific, and technical services",26.1000,,,,,69.3800
+2026-05-01,Sector,Retail,7.9600,,,,,0.8000
+2026-05-01,Sector,Technology and media,64.5000,,,,,107.4000
+2026-06-01,Business size,Large,2.9700,,,,,66.4500
+2026-06-01,Business size,Medium,8.3400,,,,,98.5800
+2026-06-01,Business size,Small,20.3000,,,,,123.3500
+2026-06-01,Financing status,Other,7.2900,,,,,6.9800
+2026-06-01,Financing status,PE-backed,6.3400,,,,,10.9000
+2026-06-01,Financing status,VC-backed,68.4300,,,,,251.4400
+2026-06-01,Overall,,10.9200,223.2700,2834.2600,517.3400,5405.4600,20.3400
+2026-06-01,Sector,Accommodation and food services,1.8900,,,,,1.1000
+2026-06-01,Sector,Construction,3.7700,,,,,4.7500
+2026-06-01,Sector,Finance and insurance,34.5300,,,,,16.2900
+2026-06-01,Sector,Health care,2.6700,,,,,5.9800
+2026-06-01,Sector,Manufacturing,7.9700,,,,,9.7100
+2026-06-01,Sector,"Professional, scientific, and technical services",27.8300,,,,,63.9600
+2026-06-01,Sector,Retail,8.0500,,,,,0.8600
+2026-06-01,Sector,Technology and media,66.7100,,,,,152.8900
+2026-07-01,Business size,Large,3.4100,,,,,92.1300
+2026-07-01,Business size,Medium,9.2300,,,,,126.7300
+2026-07-01,Business size,Small,22.2200,,,,,155.9400
+2026-07-01,Financing status,Other,8.0000,,,,,9.0800
+2026-07-01,Financing status,PE-backed,7.4100,,,,,11.8300
+2026-07-01,Financing status,VC-backed,75.7100,,,,,361.5300
+2026-07-01,Overall,,11.8800,263.0100,3797.5800,644.5800,7975.8400,26.1700
+2026-07-01,Sector,Accommodation and food services,2.0000,,,,,1.1700
+2026-07-01,Sector,Construction,4.1200,,,,,4.9200
+2026-07-01,Sector,Finance and insurance,40.0000,,,,,23.3800
+2026-07-01,Sector,Health care,2.8100,,,,,5.4700
+2026-07-01,Sector,Manufacturing,8.8300,,,,,11.7000
+2026-07-01,Sector,"Professional, scientific, and technical services",31.9900,,,,,106.0100
+2026-07-01,Sector,Retail,8.6700,,,,,1.0400
+2026-07-01,Sector,Technology and media,77.4700,,,,,205.6600
+2026-08-01,Business size,Large,3.6800,,,,,82.7100
+2026-08-01,Business size,Medium,9.3200,,,,,137.3300
+2026-08-01,Business size,Small,23.2300,,,,,159.1200
+2026-08-01,Financing status,Other,8.3300,,,,,4.5100
+2026-08-01,Financing status,PE-backed,7.8600,,,,,13.3500
+2026-08-01,Financing status,VC-backed,81.2000,,,,,312.7100
+2026-08-01,Overall,,12.5000,279.9800,3768.5700,675.6000,7205.1300,13.7100
+2026-08-01,Sector,Accommodation and food services,2.1900,,,,,1.3400
+2026-08-01,Sector,Construction,4.6100,,,,,6.3000
+2026-08-01,Sector,Finance and insurance,41.2400,,,,,2.3000
+2026-08-01,Sector,Health care,2.8200,,,,,6.5400
+2026-08-01,Sector,Manufacturing,9.8400,,,,,13.7500
+2026-08-01,Sector,"Professional, scientific, and technical services",33.3300,,,,,98.8300
+2026-08-01,Sector,Retail,9.6800,,,,,1.2500
+2026-08-01,Sector,Technology and media,80.1500,,,,,178.8400
