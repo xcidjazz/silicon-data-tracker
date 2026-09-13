@@ -2,24 +2,32 @@
 
 Datasets captured (each becomes one sheet in one workbook, one CSV archive):
   1. LLM token expenditure  - LLM Token / Open LLM / Proprietary LLM  (4dp)
-  2. GPU rental prices      - H100/A100/H200/MI300X neo-cloud, H100/A100 hyperscaler (2dp)
+  2. GPU rental prices      - H100/A100/H200/MI300X/B200 neo-cloud, H100/A100 hyperscaler (2dp)
+  3. GPU forward curves     - H100/A100/B200 term and forward rate, 0-36 months (4dp)
+  4. Ramp AI Index          - business AI adoption and spend per employee (monthly)
 
 WORKBOOK OWNERSHIP CONTRACT - read before editing the workbook by hand:
 
-  Machine-owned (appended to or regenerated every run, do not hand-edit):
-    * sheet 'Daily Index'  columns A:G   - LLM token indices
-    * sheet 'GPU Rental'   columns A:O   - GPU rental indices
-    * sheets 'Chart' and 'Source'        - rebuilt each run
+  Machine-owned (appended to, revised in place, or regenerated - do not hand-edit):
+    * sheet 'Daily Index'              columns A:G   - LLM token indices
+    * sheet 'GPU Rental'               columns A:O   - GPU rental indices
+    * sheet 'Forward Curve'            columns A:AN  - daily curve snapshots
+    * sheet 'Ramp Adoption'            columns A:F   - monthly
+    * sheet 'Ramp Spend per Employee'  columns A:I   - monthly
+    * sheets 'Chart' and 'Source'                    - rebuilt each run
 
-  Yours (the script never touches these):
-    * 'Daily Index' columns H onward, 'GPU Rental' columns P onward
+  Yours (normal runs never touch these; a sheet regeneration - --rebuild, or an
+  out-of-order date on a daily sheet - does, so keep real analysis on your own sheet):
+    * columns to the right of those ranges
     * any other sheet you create
 
-Rows are APPENDED. Existing rows are never rewritten, because each endpoint only
-exposes a rolling 7-day window - older values are gone from the web forever.
-The CSVs under data/ are the permanent archive and the ultimate source of truth:
-the workbook is reconstructible from them, they are not reconstructible from the
-web. Both are snapshotted to backups/ before every write.
+Rows are APPENDED and never deleted, because each endpoint only exposes a rolling
+7-day window - older values are gone from the web forever. When a publisher revises a
+number it already printed, the archive takes the revision (logged) and the matching
+machine-owned value cells are updated in place; the first print survives in backups/
+and in the cloud repo's git history. The CSVs under data/ are the permanent archive
+and the ultimate source of truth: the workbook is reconstructible from them, they are
+not reconstructible from the web. Both are snapshotted to backups/ before every write.
 
 Run:  python scrape_llm_index.py [--no-xlsx] [--quiet] [--rebuild] [--only llm|gpu]
 """
@@ -485,6 +493,39 @@ def fetch_forward_curve(session):
     return as_of, payload
 
 
+def replace_with_retry(tmp, dest, attempts=6):
+    """os.replace that rides out a transient file lock.
+
+    On Windows, OneDrive, Defender and the search indexer briefly hold handles on files
+    that have just changed, and os.replace onto a held file raises PermissionError rather
+    than waiting. 2026-09-13: the vault sync died replacing forward_curve.csv, and the
+    scrape four seconds later wrote the same file cleanly. Back off 0.5s doubling (about
+    15s in all) and retry. If the lock outlasts that - in practice the file is open in
+    Excel - remove the temp file so it is not left behind, and re-raise for the caller.
+    """
+    delay = 0.5
+    for attempt in range(1, attempts + 1):
+        try:
+            os.replace(tmp, dest)
+            return
+        except PermissionError:
+            if attempt == attempts:
+                _discard(tmp)
+                raise
+            time.sleep(delay)
+            delay *= 2
+        except OSError:
+            _discard(tmp)
+            raise
+
+
+def _discard(path):
+    try:
+        os.unlink(path)
+    except OSError:
+        pass
+
+
 def archive_raw_curve(as_of, payload):
     """Keep the untouched payload - all 145 tenors - so 'in totality' is literal."""
     FC_RAW_DIR.mkdir(parents=True, exist_ok=True)
@@ -494,7 +535,7 @@ def archive_raw_curve(as_of, payload):
     fd, tmp = tempfile.mkstemp(dir=FC_RAW_DIR, suffix=".tmp")
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, separators=(",", ":"), sort_keys=True)
-    os.replace(tmp, dest)
+    replace_with_retry(tmp, dest)
     return True
 
 
@@ -555,11 +596,59 @@ def write_fc_csv(rows):
         w.writeheader()
         for k in sorted(rows):
             w.writerow({c: rows[k].get(c, "") for c in FC_COLUMNS})
-    os.replace(tmp, FC_CSV)
+    replace_with_retry(tmp, FC_CSV)
+
+
+def _refresh_values(ws, targets, cols, first_col, fmt, key_cols):
+    """Bring already-written machine-owned value cells into line with the archive.
+
+    Publishers revise numbers they have already printed. Silicon Data's first print for
+    2026-09-09 was 1.0810 and became 0.9745 the next day - captured independently by the
+    cloud runner and this laptop, so a genuine revision, not a scrape error - and Ramp
+    restated 1,210 historical cells when it published August. The archive takes
+    revisions; the sheet writers used to skip any key already written, so the workbook
+    kept first prints for good.
+
+    Deliberately narrow: value cells in machine-owned columns only. Formula cells (the
+    DoD % columns) are never touched and recompute on open, user columns and user sheets
+    are never touched, and a blank in the archive never blanks a cell. Each revision is
+    logged, and the git history of data/ keeps every first print. Returns cells changed.
+    """
+    changed = []
+    for row_idx, rec in targets:
+        for i, col in enumerate(cols):
+            try:
+                new = float((rec.get(col) or "").strip())
+            except ValueError:
+                continue  # blank in the archive: leave the cell as it is
+            cell = ws.cell(row=row_idx, column=first_col + i)
+            old = cell.value
+            if isinstance(old, str) and old.startswith("="):
+                continue
+            if isinstance(old, (int, float)) and abs(old - new) < 1e-9:
+                continue
+            cell.value = new
+            cell.number_format = fmt
+            changed.append((row_idx, first_col + i, old, new))
+    if changed:
+        log(f"  '{ws.title}': {len(changed)} cell(s) revised in place to match the archive")
+        for row_idx, col_idx, old, new in changed[:5]:
+            key = " / ".join(_cell_text(ws.cell(row=row_idx, column=c).value)
+                             for c in range(1, key_cols + 1))
+            log(f"     REVISED {key} {ws.cell(row=1, column=col_idx).value}: {old} -> {new}")
+    return len(changed)
+
+
+def _cell_text(v):
+    return v.strftime("%Y-%m-%d") if isinstance(v, datetime) else str(v)
+
+
+def _mode(base, revised):
+    return f"{base} + {revised} revised cell(s)" if revised else base
 
 
 def _sync_fc_sheet(wb, rows, rebuild):
-    """Append curve snapshots not already present. Never rewrites a stored curve."""
+    """Append curve snapshots not already present; refresh stored values the archive revised."""
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
     from openpyxl.utils import get_column_letter
 
@@ -587,14 +676,16 @@ def _sync_fc_sheet(wb, rows, rebuild):
     else:
         ws = wb[FC_SHEET]
 
-    present = set()
+    present = {}
     for r in range(2, ws.max_row + 1):
         d, g, rt = (ws.cell(row=r, column=c).value for c in (1, 2, 3))
         if d is None:
             continue
         d = d.strftime("%Y-%m-%d") if isinstance(d, datetime) else str(d)[:10]
-        present.add((d, str(g), str(rt)))
+        present[(d, str(g), str(rt))] = r
 
+    revised = _refresh_values(ws, [(present[k], rows[k]) for k in sorted(rows) if k in present],
+                              [f"t{t}" for t in FC_TENORS], first_col=4, fmt="0.0000", key_cols=3)
     row_at = ws.max_row
     added = 0
     for key in sorted(rows):
@@ -612,7 +703,7 @@ def _sync_fc_sheet(wb, rows, rebuild):
             cell.number_format = "0.0000"
         added += 1
     ws.auto_filter.ref = f"A1:{get_column_letter(3 + len(FC_TENORS))}{ws.max_row}"
-    return added, ("rebuilt" if rebuild else "created" if created else "appended")
+    return added, _mode("rebuilt" if rebuild else "created" if created else "appended", revised)
 
 
 # ------------------------------------------------------------- Ramp AI Index
@@ -748,7 +839,7 @@ def archive_raw_ramp(arrays, latest_month):
     fd, tmp = tempfile.mkstemp(dir=RAMP_RAW_DIR, suffix=".tmp")
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         json.dump(arrays, fh, separators=(",", ":"), sort_keys=True)
-    os.replace(tmp, dest)
+    replace_with_retry(tmp, dest)
     return True
 
 
@@ -767,7 +858,7 @@ def write_keyed_csv(path, columns, rows):
         w.writeheader()
         for k in sorted(rows):
             w.writerow({c: rows[k].get(c, "") for c in columns})
-    os.replace(tmp, path)
+    replace_with_retry(tmp, path)
 
 
 def _sync_ramp_sheet(wb, which, rows, rebuild):
@@ -797,15 +888,17 @@ def _sync_ramp_sheet(wb, which, rows, rebuild):
     else:
         ws = wb[name]
 
-    present = set()
+    present = {}
     for r in range(2, ws.max_row + 1):
         d = ws.cell(row=r, column=1).value
         if d is None:
             continue
         d = d.strftime("%Y-%m-%d") if isinstance(d, datetime) else str(d)[:10]
-        present.add((d, str(ws.cell(row=r, column=2).value or ""),
-                     str(ws.cell(row=r, column=3).value or "")))
+        present[(d, str(ws.cell(row=r, column=2).value or ""),
+                 str(ws.cell(row=r, column=3).value or ""))] = r
 
+    revised = _refresh_values(ws, [(present[k], rows[k]) for k in sorted(rows) if k in present],
+                              spec["metrics"], first_col=4, fmt=spec["fmt"], key_cols=3)
     row_at, added = ws.max_row, 0
     for key in sorted(rows):
         if key in present:
@@ -822,7 +915,7 @@ def _sync_ramp_sheet(wb, which, rows, rebuild):
             cell.number_format = spec["fmt"]
         added += 1
     ws.auto_filter.ref = f"A1:{get_column_letter(len(spec['labels']))}{ws.max_row}"
-    return added, ("rebuilt" if rebuild else "created" if created else "appended")
+    return added, _mode("rebuilt" if rebuild else "created" if created else "appended", revised)
 
 
 # ------------------------------------------------------------------ archive io
@@ -861,7 +954,7 @@ def write_csv(path, columns, rows):
         w.writeheader()
         for d in sorted(rows):
             w.writerow({c: rows[d].get(c, "") for c in columns})
-    os.replace(tmp, path)
+    replace_with_retry(tmp, path)
 
 
 def upsert(existing, series):
@@ -933,7 +1026,8 @@ def _create_sheet(wb, spec):
 
 
 def _sync_sheet(wb, spec, rows, rebuild):
-    """Append missing dates to one dataset's sheet. Returns (n_appended, mode)."""
+    """Append missing dates and refresh revised values on one dataset's sheet.
+    Returns (n_appended, mode)."""
     ordered = sorted(rows)
     name = spec["sheet"]
 
@@ -946,26 +1040,28 @@ def _sync_sheet(wb, spec, rows, rebuild):
         return len(ordered), "rebuilt" if rebuild else "created"
 
     ws = wb[name]
-    present = set()
+    present = {}
     for r in range(2, ws.max_row + 1):
         v = ws.cell(row=r, column=1).value
         if isinstance(v, datetime):
-            present.add(v.strftime("%Y-%m-%d"))
+            present[v.strftime("%Y-%m-%d")] = r
         elif isinstance(v, str) and v.strip():
-            present.add(v.strip()[:10])
+            present[v.strip()[:10]] = r
     missing = [d for d in ordered if d not in present]
     # Appending assumes dates arrive in order. An older date would misorder the
     # DoD chain, so regenerate that sheet from the archive instead.
     if missing and present and min(missing) < max(present):
         log(f"  note: out-of-order date on '{name}', regenerating from archive")
         return _sync_sheet(wb, spec, rows, rebuild=True)
+    revised = _refresh_values(ws, [(present[d], rows[d]) for d in ordered if d in present],
+                              spec["columns"][1:], first_col=2, fmt=spec["fmt"], key_cols=1)
     row_at = ws.max_row
     for d in missing:
         row_at += 1
         _write_row(ws, row_at, d, rows[d], spec)
     ws.auto_filter.ref = (f"A1:{ws.cell(row=1, column=2 * len(spec['columns']) - 1).coordinate[:-1]}"
                           f"{len(ordered) + 1}")
-    return len(missing), "appended"
+    return len(missing), _mode("appended", revised)
 
 
 def _rebuild_chart_sheet(wb, store):
@@ -1005,7 +1101,8 @@ def _rebuild_source_sheet(wb, store, curves=None, ramp=None):
     meta = wb.create_sheet(SOURCE_SHEET)
     lines = [
         ["Source", "Silicon Data - silicondata.com"],
-        ["Update mode", "Append-only. New dates are added as new rows; existing rows are never rewritten."],
+        ["Update mode", "Append + revise. New dates are added as new rows and rows are never deleted; "
+                        "a value the publisher revises is updated in place to match the archive (logged)."],
         ["Backups", f"{BACKUP_DIR} (last {KEEP_BACKUPS} of each file)"],
         ["", ""],
         ["SHEET", "'Daily Index' - LLM token expenditure indices"],
@@ -1114,7 +1211,7 @@ def update_xlsx(store, curves=None, ramp=None, rebuild=False):
     fd, tmp = tempfile.mkstemp(dir=XLSX_PATH.parent, suffix=".xlsx")
     os.close(fd)
     wb.save(tmp)
-    os.replace(tmp, XLSX_PATH)
+    replace_with_retry(tmp, XLSX_PATH)
     return results
 
 

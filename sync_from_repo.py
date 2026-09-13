@@ -12,7 +12,7 @@ dropped: if the cloud missed a day this machine caught, that day survives. Where
 sides hold the same key and disagree, the cloud value wins and the change is logged -
 the cloud run is the one whose cross-checks gate every write.
 
-Run:  python sync_from_repo.py [--dry-run]
+Run:  python sync_from_repo.py [--dry-run] [--quiet]
 """
 
 import argparse
@@ -112,10 +112,12 @@ def sync_raw(local_dir, remote_dir, dry):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="report what would change, write nothing")
+    ap.add_argument("--quiet", action="store_true", help="no Telegram messages")
     args = ap.parse_args()
 
     S.log(f"=== sync start (from {REPO})")
     total_added, total_changed, touched = 0, 0, False
+    locked = []
 
     for path, remote, keys, columns in FILES:
         try:
@@ -131,13 +133,21 @@ def main():
         merged, added, changed = merge(local, remote_rows, keys, columns)
         if len(merged) < before:
             raise ValueError(f"{path.name}: refusing to write, merge shrank {before} -> {len(merged)}")
-        total_added += added
-        total_changed += len(changed)
         if added or changed:
-            touched = True
             if not args.dry_run:
-                S.backup(path)
-                S.write_keyed_csv(path, columns, merged)
+                try:
+                    S.backup(path)
+                    S.write_keyed_csv(path, columns, merged)
+                except PermissionError as exc:
+                    # Still held after the retry window - in practice open in Excel. Skip
+                    # this one file rather than abandon the whole sync; the cloud archive
+                    # keeps the data and the next run fills it in.
+                    locked.append(path.name)
+                    S.log(f"  WARN {path.name} still locked after retrying, skipped this run: {exc}")
+                    continue
+            touched = True
+            total_added += added
+            total_changed += len(changed)
             S.log(f"  {path.name}: +{added} filled from cloud, {len(changed)} revised "
                   f"({before} -> {len(merged)} rows)")
             for c in changed[:10]:
@@ -163,7 +173,7 @@ def main():
             ramp = {w: S.load_keyed_csv(sp["csv"], ["date_month", "breakdown", "dimension"])
                     for w, sp in S.RAMP_SHEETS.items()}
             for key, (n, mode) in S.update_xlsx(archives, curves, ramp).items():
-                if n:
+                if n or "revised" in mode:
                     sheet = (S.FC_SHEET if key == "fc" else
                              S.RAMP_SHEETS[key]["sheet"] if key in S.RAMP_SHEETS else
                              S.DATASETS[key]["sheet"])
@@ -171,7 +181,13 @@ def main():
         except PermissionError:
             S.log("  WARN xlsx locked (open in Excel?) - CSVs synced, sheet catches up next run")
 
-    S.log(f"=== sync ok  {total_added} row(s) filled from cloud, {total_changed} revised")
+    if locked and not args.quiet:
+        S.notify_failure(
+            f"Vault sync note: skipped {', '.join(locked)} - still locked after 15s of retries, "
+            "which usually means it is open in Excel. No data lost: the cloud archive has it, "
+            "and the next run fills it in once the file is closed.")
+    note = f"  (skipped, locked: {', '.join(locked)})" if locked else ""
+    S.log(f"=== sync ok  {total_added} row(s) filled from cloud, {total_changed} revised{note}")
     return 0
 
 
