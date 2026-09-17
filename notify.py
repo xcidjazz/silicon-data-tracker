@@ -1,10 +1,11 @@
 """Daily Telegram summary. Reads the archives and reports what actually moved.
 
-Usage:  python notify.py --url <site url> [--changed 0|1]
+Usage:  python notify.py --url <site url> [--changed 0|1] [--status <feed status file>]
 Sends nothing unless TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set.
 """
 import argparse
 import csv
+import json
 import os
 import urllib.parse
 import urllib.request
@@ -60,6 +61,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--url", default="")
     ap.add_argument("--changed", default="1")
+    ap.add_argument("--status", default="", help="feed status file the scraper writes when a feed is down")
     args = ap.parse_args()
 
     llm = rows("llm_token_index.csv")
@@ -68,6 +70,16 @@ def main():
     ad = rows("ramp_adoption.csv")
 
     out = ["AI Compute Tape - daily update", ""]
+
+    down = {}
+    if args.status and Path(args.status).exists():
+        try:
+            down = json.loads(Path(args.status).read_text(encoding="utf-8")).get("down") or {}
+        except (OSError, ValueError):
+            down = {"Feed status": "status file unreadable - check the run log"}
+    if down:
+        out += ["FEED DOWN (everything else below was captured normally)"]
+        out += [f"  {name}: {why}" for name, why in down.items()] + [""]
 
     if llm:
         c, p = llm[-1], (llm[-2] if len(llm) > 1 else {})
@@ -93,6 +105,10 @@ def main():
         if "term_rate" in h:
             spot, m36 = num(h["term_rate"].get("t0")), num(h["term_rate"].get("t36"))
             back = f"  spot {spot:.2f} vs 36m {m36:.2f}" if spot and m36 else ""
+            if spot and not m36:
+                have = [int(c[1:]) for c, v in h["term_rate"].items()
+                        if c.startswith("t") and c[1:].isdigit() and (v or "").strip()]
+                back = f"  spot {spot:.2f}; published to {max(have)}m only"
             prem = f"  ({(spot/m36-1)*100:+.1f}% backwardation)" if spot and m36 else ""
             out += [f"FORWARD CURVE  (H100 term, as of {latest}){back}{prem}",
                     f"  snapshots archived: {len(snaps)}", ""]

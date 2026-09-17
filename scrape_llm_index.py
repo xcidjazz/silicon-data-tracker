@@ -34,6 +34,7 @@ Run:  python scrape_llm_index.py [--no-xlsx] [--quiet] [--rebuild] [--only llm|g
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import re
@@ -449,11 +450,203 @@ def cross_check(series, readings):
 
 # -------------------------------------------------------------- forward curve
 
-def fetch_forward_curve(session):
-    """Return (as_of_date, payload) for the full 3-GPU x 145-tenor curve set."""
+class FeedUnavailable(Exception):
+    """The source is reachable but publishing nothing - not a scraper fault."""
+
+
+FC_EMPTY_TEXT = "No latest forward curve data is available right now."
+
+
+def fetch_forward_curve(session, spot, archive):
+    """Return (as_of_date, payload) for the 3-GPU curve set, whichever page format is live.
+
+    Until 2026-09-16 the portal embedded one payload carrying its own as-of date and 145
+    tenors (_parse_legacy_curve). Between the 06:02Z and 14:13Z runs that day Silicon Data
+    shipped a redesign that hands the chart a `dataByGpu` prop with no date at all - and
+    every GPU in it was empty; the page read "No latest forward curve data is available
+    right now." for everyone. No populated example of the new format existed when this was
+    written, so the redesign path follows the chart component's own contract (GPU keys in
+    any case, numeric tenor keys, nodes with term_rate and forward_rate), dates the curve
+    from the spot index (date_curve), and keeps anything it cannot date or validate
+    verbatim under data/forward_curve_raw/undated_*.json rather than guessing.
+    """
     r = session.get(FC_PORTAL, params=bust(), timeout=45, headers=NO_CACHE)
     r.raise_for_status()
     html = r.text
+    if re.search(Q + "data" + Q + r"\s*:\s*\{" + Q + "date" + Q, html):
+        return _parse_legacy_curve(html)
+    props = _rsc_props(html, "dataByGpu")
+    if props is None:
+        raise ValueError("forward curve: page format changed again - neither the old payload "
+                         "nor the redesign's dataByGpu prop is on the page")
+    try:
+        payload = _normalise_redesign_curve(props["dataByGpu"], html)
+        as_of, how = date_curve(payload, spot, archive)
+    except FeedUnavailable:
+        raise
+    except ValueError as exc:
+        kept = keep_undated_curve(props)
+        raise ValueError(f"{exc}. Raw curve kept as {kept}; nothing written") from exc
+    payload["date"] = as_of
+    payload["_source"] = {
+        "page": "portal forward-curve-chart, dataByGpu format (redesign of 2026-09-16)",
+        "date": how,
+        "captured_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "other_props": {k: v for k, v in props.items() if k != "dataByGpu"},
+    }
+    monthly = sum(1 for t in FC_TENORS if t in payload[FC_GPUS[0]])
+    log(f"  forward curve     as of {as_of} ({how})  {len(FC_GPUS)} GPUs x "
+        f"{len(payload[FC_GPUS[0]])} tenors x {len(FC_RATES)} rates")
+    if monthly < len(FC_TENORS):
+        log(f"  WARN curve carries {monthly} of {len(FC_TENORS)} monthly tenors (0-36m); "
+            "the missing ones are left blank, never filled")
+    return as_of, payload
+
+
+def _rsc_props(html, key):
+    """The props object carrying `key` in the page's RSC stream, with a $-reference resolved."""
+    rows = {}
+    for line in _rsc_stream(html).split("\n"):
+        rid, sep, body = line.partition(":")
+        if not sep or not re.fullmatch(r"[0-9a-f]+", rid):
+            continue
+        try:
+            rows[rid] = json.loads(body)
+        except json.JSONDecodeError:
+            continue
+
+    def resolve(value, depth=0):
+        m = re.fullmatch(r"\$@?([0-9a-f]+)", value) if isinstance(value, str) else None
+        if m and m.group(1) in rows and depth < 5:
+            return resolve(rows[m.group(1)], depth + 1)
+        return value
+
+    for body in rows.values():
+        stack = [body]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, dict):
+                if key in node:
+                    return {**node, key: resolve(node[key])}
+                stack.extend(node.values())
+            elif isinstance(node, list):
+                stack.extend(node)
+    return None
+
+
+def _normalise_redesign_curve(data, html):
+    """dataByGpu -> the legacy payload shape: {GPU: {tenor_months: {term_rate, forward_rate}}}."""
+    if not isinstance(data, dict):
+        raise ValueError(f"forward curve: dataByGpu is {type(data).__name__}, not an object")
+    by_key = {str(k).lower(): v for k, v in data.items()}
+    payload = {}
+    for gpu in FC_GPUS:
+        nodes = by_key.get(gpu.lower())
+        clean = {}
+        for k, node in (nodes.items() if isinstance(nodes, dict) else ()):
+            if not re.fullmatch(r"-?\d+(\.\d+)?", str(k)) or not isinstance(node, dict):
+                continue
+            try:
+                term, fwd = float(node["term_rate"]), float(node["forward_rate"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            clean[f"{float(k):g}"] = {"term_rate": term, "forward_rate": fwd}
+        payload[gpu] = clean
+    if not any(payload.values()):
+        said = f' Their page reads: "{FC_EMPTY_TEXT}"' if FC_EMPTY_TEXT in html else ""
+        raise FeedUnavailable("Silicon Data is publishing no forward curve, so there is nothing to "
+                              "capture; capture resumes by itself once they restore it." + said)
+    for gpu in FC_GPUS:
+        if not payload[gpu]:
+            raise ValueError(f"forward curve: {gpu} is empty while other GPUs carry data")
+        if "0" not in payload[gpu]:
+            raise ValueError(f"forward curve: {gpu} has no tenor-0 (spot) node to check against")
+    top = max(float(t) for nodes in payload.values() for t in nodes)
+    if top <= 5:
+        raise ValueError(f"forward curve: longest tenor key is {top:g}, which reads as years "
+                         "rather than months; not guessing the scale")
+    return payload
+
+
+def date_curve(payload, spot, archive):
+    """Date a curve the page no longer dates. Returns (date, how) or raises ValueError.
+
+    The curve's tenor-0 term rate is the neo-cloud spot index - the cross-check has
+    enforced that since capture began. Replayed over all 19 snapshots dated by the old
+    page (2026-08-28..09-15), the three spots jointly equalled tenor 0 on the snapshot's
+    own day every time, but in 4 of 19 also on the neighbouring day (spot unchanged at
+    2dp). Each of those was settled by the neighbour already having its own curve on
+    file. So: a matching day whose stored curve equals this one means the page is simply
+    re-serving it; otherwise exactly one matching day with no curve on file is the date.
+    No match, or several unfiled matches, is refused rather than guessed. The replay
+    dated 19 of 19 correctly and recognised 19 of 19 re-serves.
+    """
+    t0 = {g: f"{payload[g]['0']['term_rate']:.2f}" for g in FC_GPUS}
+    cols = [spot.get(f"{g.lower()}_neo", {}) for g in FC_GPUS]
+    days = sorted(set(cols[0]).intersection(*cols[1:]))[-7:]  # the portal's 7-day window
+    if not days:
+        raise ValueError("forward curve: no spot-index history to date the curve against")
+    shown = " / ".join(f"{g} {t0[g]}" for g in FC_GPUS)
+    matches = [d for d in days
+               if all(f"{float(c[d]):.2f}" == t0[g] for g, c in zip(FC_GPUS, cols))]
+    stored = {k[0] for k in archive}
+    for d in matches:
+        if d in stored and _same_as_stored(payload, archive, d):
+            return d, f"re-served {d} curve, already on file"
+    fresh = [d for d in matches if d not in stored]
+    if len(fresh) == 1:
+        return fresh[0], f"dated by spot-index match {shown}"
+    if not matches:
+        raise ValueError(f"forward curve: cannot date it - spot node {shown} matches no "
+                         f"spot-index day in {days[0]}..{days[-1]}")
+    if not fresh:
+        raise ValueError(f"forward curve: spot node {shown} matches only {', '.join(matches)}, "
+                         "whose curves on file differ from this one")
+    raise ValueError(f"forward curve: cannot date it - spot node {shown} matches "
+                     f"{len(fresh)} days with no curve on file ({', '.join(fresh)})")
+
+
+def _same_as_stored(payload, archive, d):
+    """True if every monthly tenor both hold agrees to 4dp, for all GPUs and both rates."""
+    shared = 0
+    for gpu in FC_GPUS:
+        for rate in FC_RATES:
+            row = archive.get((d, gpu, rate))
+            if not row:
+                return False
+            for t in FC_TENORS:
+                v, node = (row.get(f"t{t}") or "").strip(), payload[gpu].get(t)
+                if not (v and node):
+                    continue
+                if f"{float(node[rate]):.4f}" != f"{float(v):.4f}":
+                    return False
+                shared += 1
+    return shared > 0
+
+
+def keep_undated_curve(props):
+    """Archive a curve that could not be dated or validated, verbatim, once per distinct payload."""
+    blob = json.dumps(props, separators=(",", ":"), sort_keys=True)
+    digest = hashlib.sha256(blob.encode("utf-8")).hexdigest()
+    FC_RAW_DIR.mkdir(parents=True, exist_ok=True)
+    for old in sorted(FC_RAW_DIR.glob("undated_*.json")):
+        try:
+            if json.loads(old.read_text(encoding="utf-8")).get("sha256") == digest:
+                return old.name
+        except (OSError, ValueError):
+            continue
+    now = datetime.now(timezone.utc)
+    dest = FC_RAW_DIR / f"undated_{now:%Y-%m-%dT%H%M%SZ}.json"
+    fd, tmp = tempfile.mkstemp(dir=FC_RAW_DIR, suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        json.dump({"captured_utc": f"{now:%Y-%m-%dT%H:%M:%SZ}", "source": FC_PORTAL,
+                   "sha256": digest, "props": props}, fh, separators=(",", ":"), sort_keys=True)
+    replace_with_retry(tmp, dest)
+    return dest.name
+
+
+def _parse_legacy_curve(html):
+    """The pre-2026-09-16 page: one payload with its own as-of date and 145 tenors."""
     m = re.search(Q + "data" + Q + r"\s*:\s*\{" + Q + "date" + Q, html)
     if not m:
         raise ValueError("forward curve: data payload not found")
@@ -546,7 +739,11 @@ def curve_rows(as_of, payload):
         for rate in FC_RATES:
             row = {"date": as_of, "gpu": gpu, "rate_type": rate}
             for t in FC_TENORS:
-                v = payload[gpu][t].get(rate)
+                node = payload[gpu].get(t)
+                if node is None:
+                    row[f"t{t}"] = ""  # not published; left blank, never filled
+                    continue
+                v = node.get(rate)
                 if v is None:
                     raise ValueError(f"forward curve: {gpu} tenor {t} missing {rate}")
                 row[f"t{t}"] = f"{float(v):.4f}"
@@ -1128,7 +1325,7 @@ def _rebuild_source_sheet(wb, store, curves=None, ramp=None):
         ["Units", "USD per GPU-hour. Neo-cloud only. Tenor 0m = spot."],
         ["Tenors", "0 to 36 months. The source also emits 108 interpolated quarter-month points; "
                    "those are kept verbatim in the raw JSON archive, not here."],
-        ["Raw archive", f"{FC_RAW_DIR} - full 145-tenor payload, one file per day, never deleted"],
+        ["Raw archive", f"{FC_RAW_DIR} - full payload as published (145 tenors under the old page), one file per day, never deleted; undated_*.json = curves kept verbatim that could not be dated"],
         ["Snapshots", "One curve per day, no history and no backfill at source. A day not "
                       "captured is lost permanently - unlike the 7-day series, this has NO self-heal."],
         ["Machine cols", "A:AN - do not hand-edit.  YOURS: AO onward"],
@@ -1217,6 +1414,40 @@ def update_xlsx(store, curves=None, ramp=None, rebuild=False):
 
 # ------------------------------------------------------------------------ main
 
+FEED_NAMES = {"llm": "Token prices", "gpu": "GPU rental", "fc": "Forward curve", "ramp": "Ramp AI Index"}
+
+
+def spot_series(this_run=None):
+    """Neo-cloud spot for the curve GPUs: the archive, overlaid with this run's fetch."""
+    rows = load_csv(DATASETS["gpu"]["csv"])
+    out = {}
+    for gpu in FC_GPUS:
+        col = f"{gpu.lower()}_neo"
+        out[col] = {d: r[col] for d, r in rows.items() if (r.get(col) or "").strip()}
+        out[col].update((this_run or {}).get(col, {}))
+    return out
+
+
+def report_down(down, quiet=False):
+    """Name each dead feed once per run; everything else in the run was saved.
+
+    Cloud runs set FEED_STATUS_FILE, and the workflow's daily summary leads with it - an
+    outage adds a line to a message already sent three times a day instead of three more
+    messages. The laptop run has no summary step, so it messages directly.
+    """
+    named = {FEED_NAMES.get(k, k): v for k, v in down.items()}
+    status_file = os.environ.get("FEED_STATUS_FILE")
+    if status_file:
+        path = Path(status_file)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"down": named}, indent=1), encoding="utf-8")
+        return
+    if not quiet:
+        notify_failure("AI Compute Tape - FEED DOWN\n\n"
+                       + "\n".join(f"- {k}: {v}" for k, v in named.items())
+                       + "\n\nEvery other feed was captured and saved as normal.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-xlsx", action="store_true", help="update the CSV archives only")
@@ -1233,51 +1464,60 @@ def main():
     session = requests.Session()
     session.headers.update({"User-Agent": UA, "Accept-Language": "en-US,en;q=0.9"})
 
-    store = {}
-    page = fetch_marketing_page(session)  # one fetch, cross-checks both datasets
+    store, down = {}, {}
+    curves = ramp = page = None
 
-    if "llm" in wanted:
+    def marketing_page():  # one fetch, cross-checks both datasets
+        nonlocal page
+        if page is None:
+            page = fetch_marketing_page(session)
+        return page
+
+    def llm_feed():
         series = {}
         for token in LLM_SERIES:
             col, values = fetch_llm(session, token)
             series[col] = values
-        cross_check(series, parse_marketing_readings(page))
+        cross_check(series, parse_marketing_readings(marketing_page()))
         store["llm"] = series
 
-    if "gpu" in wanted:
+    def gpu_feed():
         series = {}
         for col, gpu, tab, _ in GPU_SERIES:
             col, values = fetch_gpu(session, col, gpu, tab)
             series[col] = values
-        cross_check_gpu(series, parse_gpu_cards(page))
+        cross_check_gpu(series, parse_gpu_cards(marketing_page()))
         store["gpu"] = series
 
-    curves = None
-    if "fc" in wanted:
-        as_of, payload = fetch_forward_curve(session)
-        cross_check_curve(payload, store.get("gpu"), as_of)
+    def fc_feed():
+        nonlocal curves
+        archive = load_fc_csv()
+        spot = spot_series(store.get("gpu"))
+        as_of, payload = fetch_forward_curve(session, spot, archive)
+        cross_check_curve(payload, spot, as_of)
         if archive_raw_curve(as_of, payload):
-            log(f"  raw curve archived: {as_of}.json (all 145 tenors)")
+            log(f"  raw curve archived: {as_of}.json ({len(payload[FC_GPUS[0]])} tenors)")
         fresh = curve_rows(as_of, payload)
-        curves = load_fc_csv()
-        before = len(curves)
-        new = [k for k in fresh if k not in curves]
+        merged = archive
+        before = len(merged)
+        new = [k for k in fresh if k not in merged]
         for k in new:
-            curves[k] = fresh[k]
-        if len(curves) < before:
-            raise ValueError(f"fc: refusing to write, archive shrank {before} -> {len(curves)}")
+            merged[k] = fresh[k]
+        if len(merged) < before:
+            raise ValueError(f"fc: refusing to write, archive shrank {before} -> {len(merged)}")
         backup(FC_CSV)
-        write_fc_csv(curves)
-        snaps = len({k[0] for k in curves})
-        log(f"  fc csv: {len(curves)} curve rows across {snaps} snapshot(s), {len(new)} new")
+        write_fc_csv(merged)
+        snaps = len({k[0] for k in merged})
+        log(f"  fc csv: {len(merged)} curve rows across {snaps} snapshot(s), {len(new)} new")
+        curves = merged  # only once the archive is written
 
-    ramp = None
-    if "ramp" in wanted:
+    def ramp_feed():
+        nonlocal ramp
         arrays = fetch_ramp(session)
         latest_month = cross_check_ramp(arrays)
         if archive_raw_ramp(arrays, latest_month):
             log(f"  raw ramp vintage archived: {latest_month}.json")
-        ramp = {}
+        out = {}
         for which, spec in RAMP_SHEETS.items():
             fresh = build_ramp_rows(arrays, which)
             cols = ["date_month", "breakdown", "dimension"] + spec["metrics"]
@@ -1307,10 +1547,25 @@ def main():
                 log(f"  REVISED [{which}] {r}")
             if len(revised) > 20:
                 log(f"  REVISED [{which}] ... and {len(revised) - 20} more")
-            ramp[which] = rows
+            out[which] = rows
+        ramp = out  # only once both sheets' archives are written
+
+    # Each feed stands alone. Until 2026-09-17 the first failure aborted the run, so the
+    # forward-curve outage also threw away token and GPU prints that had been fetched and
+    # cross-checked - recoverable only while they stayed inside Silicon Data's 7-day window.
+    feeds = {"llm": llm_feed, "gpu": gpu_feed, "fc": fc_feed, "ramp": ramp_feed}
+    for key in wanted:
+        try:
+            feeds[key]()
+        except Exception as exc:
+            down[key] = str(exc) if isinstance(exc, FeedUnavailable) else f"{type(exc).__name__}: {exc}"
+            log(f"  FEED DOWN [{key}] {down[key]}")
+    if len(down) == len(wanted):
+        raise RuntimeError("no feed captured anything - "
+                           + "; ".join(f"{FEED_NAMES.get(k, k)}: {v}" for k, v in down.items()))
 
     archives = {}
-    for key in [k for k in wanted if k in DATASETS]:
+    for key in [k for k in wanted if k in store]:
         spec = DATASETS[key]
         rows = load_csv(spec["csv"])
         before = len(rows)
@@ -1363,7 +1618,11 @@ def main():
         tail += f"  fc={max(k[0] for k in curves)}"
     if ramp:
         tail += f"  ramp={max(k[0] for k in next(iter(ramp.values())))}"
-    log("=== run " + ("ok" if not stale else f"ok (WITH {len(stale)} STALE FEED(S))") + "  " + tail)
+    state = "ok" if not stale else f"ok (WITH {len(stale)} STALE FEED(S))"
+    if down:
+        state = f"PARTIAL ({', '.join(down)} down)" + (f" + {len(stale)} stale" if stale else "")
+        report_down(down, quiet=args.quiet)
+    log("=== run " + state + "  " + tail)
     return 0
 
 

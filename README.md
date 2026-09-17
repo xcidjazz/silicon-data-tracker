@@ -75,7 +75,10 @@ runs are frequently late and occasionally skipped — and the forward curve cann
 back-filled, so the redundancy is deliberate rather than wasteful.
 
 A Telegram summary goes out on success; the scraper reports its own error on failure, and
-the workflow has a backstop alert for everything else that can break a run.
+the workflow has a backstop alert for everything else that can break a run. Feeds are
+independent: if one source is down, the others are still captured and saved, and the
+summary opens with a FEED DOWN line naming the dead one. The run only fails outright when
+nothing at all could be captured.
 
 ## Keeping a local copy in sync
 

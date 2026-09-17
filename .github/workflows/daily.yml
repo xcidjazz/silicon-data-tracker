@@ -45,6 +45,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           STALE_SELFTEST: ${{ inputs.selftest && '1' || '' }}
+          # A dead feed no longer fails the run (the others are still saved); it is
+          # reported at the top of the Telegram summary below instead.
+          FEED_STATUS_FILE: logs/feed_status.json
         run: python scrape_llm_index.py
 
       - name: Build site
@@ -89,7 +92,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python notify.py --url "${{ steps.deploy.outputs.page_url }}" --changed "${{ steps.commit.outputs.changed }}"
+        run: python notify.py --url "${{ steps.deploy.outputs.page_url }}" --changed "${{ steps.commit.outputs.changed }}" --status logs/feed_status.json
 
       # The scraper Telegrams its own failure with the specific error. This is the
       # backstop for everything else that can break the run - checkout, pip, Pages
