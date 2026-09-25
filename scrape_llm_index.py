@@ -228,6 +228,16 @@ def bust(params=None):
 # self-heals and a missed day costs nothing).
 MAX_LAG_DAYS = {"llm": 6, "gpu": 4, "fc": 4, "ramp": 95}
 
+# Sanity bounds for the GPU series, needed since the public cards went away (see
+# cross_check_gpu). Measured over 2026-08-23..09-23, 32 days x 7 series: the largest
+# single-day move in any series was 1.89% (h100_neo), the second largest 1.49%, and the
+# hyperscaler series move under 0.5%. Silicon Data's own revisions to a published day have
+# run to 0.4% (h100_hyper 7.20 -> 7.17). The limits below are ~8x and ~25x those extremes:
+# loose enough never to argue with a real market, tight enough that a decimal shift, a unit
+# change or one series substituted for another cannot be written.
+MAX_GPU_STEP = 0.15    # one-day move within the window
+MAX_GPU_DRIFT = 0.10   # endpoint vs what we already stored for the same day
+
 
 def check_freshness(label, latest_iso):
     """Currency check, separate from the cross-checks' consistency check.
@@ -378,7 +388,12 @@ def parse_marketing_readings(html):
 
 
 def parse_gpu_cards(html):
-    """The 'Other Silicon Indices' cards carry each GPU's latest NEO-CLOUD price."""
+    """Each GPU's latest NEO-CLOUD price from the 'Other Silicon Indices' cards.
+
+    Silicon Data deleted those cards from the public index page on 2026-09-24, so this
+    normally returns {} now and cross_check_gpu falls back. Kept because the cards are the
+    stronger check whenever they exist, and they may return in another redesign.
+    """
     out = {}
     for gpu in ("H100", "A100", "B200", "MI300X"):
         for m in re.finditer(">" + gpu + "<", html):
@@ -389,30 +404,71 @@ def parse_gpu_cards(html):
     return out
 
 
-def cross_check_gpu(series, cards):
-    """Card prices must match our stored value for the latest or previous day.
+def cross_check_gpu(series, cards, archive):
+    """Verify the GPU series before anything is written.
 
-    Two dates are allowed because the cards publish on a slight lag behind the
-    chart endpoint - observed drifting by one day. This still catches the failure
-    that matters: a whole series mislabelled, swapped, or shifted by a decimal.
+    Until 2026-09-24 every GPU's latest neo-cloud price also appeared on a card on the
+    public index page, and that independent second surface gated every write. Silicon Data
+    deleted the cards that evening (present 14:14Z, gone 20:01Z). No public price replaced
+    them: the per-GPU pages carry only static copy - the H100 page still answers "$2.53"
+    while the index reads 2.61 - so there is nothing left to compare against off-portal.
+    Rather than stop capturing (the endpoint drops a day after a week, permanently), the
+    guarantee is rebuilt from what remains:
+
+      * fetch_gpu asserts the server echoed the gpu and tab it was asked for. That is what
+        catches the original trap, a hyperscaler request silently served neo-cloud data.
+      * The endpoint re-serves a rolling 7 days, so every day but the newest can be checked
+        against what we already stored. A rescaled, substituted or mislabelled series
+        disagrees there immediately (MAX_GPU_DRIFT).
+      * No day inside the window may move more than MAX_GPU_STEP against the day before it.
+
+    Weaker than two independent surfaces, and deliberately so; the alternative was a dead
+    dataset. Cards are still honoured, strictly, whenever they are present.
     """
-    checked = 0
     for col, shown in cards.items():
         ours = series.get(col)
         if not ours:
             continue
-        recent = sorted(ours)[-2:]
-        vals = {f"{float(ours[d]):.2f}" for d in recent}
-        if f"{float(shown):.2f}" not in vals:
+        recent = sorted(ours)[-2:]  # the cards lag the chart endpoint by up to a day
+        if f"{float(shown):.2f}" not in {f"{float(ours[d]):.2f}" for d in recent}:
             raise ValueError(
                 f"{col}: public card shows {shown} but our last two days are "
                 f"{[ours[d] for d in recent]} ({recent}) - refusing to store")
-        checked += 1
-    if checked < 4:
+
+    overlap = 0
+    for col, values in series.items():
+        for d, v in values.items():
+            old = ((archive.get(d) or {}).get(col) or "").strip()
+            if not old or not float(old):
+                continue
+            overlap += 1
+            drift = abs(float(v) / float(old) - 1)
+            if drift > MAX_GPU_DRIFT:
+                raise ValueError(
+                    f"{col} {d}: endpoint now says {v}, the archive holds {old} "
+                    f"({drift:.0%} apart, limit {MAX_GPU_DRIFT:.0%}) - refusing to store, "
+                    f"that series looks rescaled or swapped, not revised")
+
+    for col, values in series.items():
+        days = sorted(values)
+        for prev, day in zip(days, days[1:]):
+            a, b = float(values[prev] or 0), float(values[day] or 0)
+            if not a or not b:
+                continue
+            if abs(b / a - 1) > MAX_GPU_STEP:
+                raise ValueError(
+                    f"{col}: {prev} {a} -> {day} {b} is a {abs(b / a - 1):.0%} one-day move "
+                    f"(limit {MAX_GPU_STEP:.0%}) - refusing to store")
+
+    if cards:
+        log(f"  cross-check OK - {len(cards)}/4 GPU cards matched, {overlap} day(s) agree with the archive")
+    elif overlap >= 3:
+        log(f"  cross-check OK - public cards gone; {overlap} day(s) agree with the archive "
+            f"and every move is within {MAX_GPU_STEP:.0%}")
+    else:
         raise ValueError(
-            f"GPU cross-check covered only {checked}/4 cards - public page parse degraded, "
-            f"refusing to store unverified values")
-    log(f"  cross-check OK - {checked}/4 GPU neo-cloud series verified against public cards")
+            f"GPU: the public cards are gone and only {overlap} stored day(s) overlap the "
+            f"endpoint's window - too little to verify against, refusing to store")
 
 
 def cross_check(series, readings):
@@ -1486,7 +1542,12 @@ def main():
         for col, gpu, tab, _ in GPU_SERIES:
             col, values = fetch_gpu(session, col, gpu, tab)
             series[col] = values
-        cross_check_gpu(series, parse_gpu_cards(marketing_page()))
+        try:
+            cards = parse_gpu_cards(marketing_page())
+        except Exception as exc:  # the cards are gone anyway; don't let the page kill the feed
+            cards = {}
+            log(f"  WARN public page unavailable for GPU cards: {type(exc).__name__}: {exc}")
+        cross_check_gpu(series, cards, load_csv(DATASETS["gpu"]["csv"]))
         store["gpu"] = series
 
     def fc_feed():

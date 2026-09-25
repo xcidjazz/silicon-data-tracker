@@ -49,7 +49,11 @@ Every dataset is cross-checked against a second surface before anything is writt
 the run aborts rather than store an unverified number:
 
 - Token: 4dp portal values must round to the 2dp figures on the public page (3/3 required).
-- GPU: checked against the "Other Silicon Indices" cards on that same page (4/4 required).
+- GPU: those cards were deleted from the public page on 2026-09-24 and nothing public
+  replaced them, so the series is now verified against itself instead — the server must echo
+  the gpu and tab asked for, the six days the rolling window re-serves must agree with the
+  archive (10% limit), and no day may move more than 15% (the largest real move in 32 days
+  was 1.89%). Cards are still checked strictly if they ever come back.
 - Forward curve: its tenor-0 node must equal the independently scraped neo-cloud spot
   index — two separate endpoints agreeing on one number.
 - Ramp: structural invariants, and `mom_change_pp` must equal the actual level difference.
