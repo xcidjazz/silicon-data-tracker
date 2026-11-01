@@ -374,16 +374,36 @@ def fetch_marketing_page(session):
     return r.text
 
 
+RE_POINT = re.compile(Q + "date" + Q + r"\s*:\s*" + Q + r"(\d{4}-\d{2}-\d{2})" + Q
+                      + r"\s*,\s*" + Q + "price" + Q + r"\s*:\s*([0-9.]+)")
+RE_READING_KEYS = "|".join(("llm-token", "open-llm", "proprietary-llm"))
+
+
 def parse_marketing_readings(html):
-    """The rounded 2dp LLM values shown on the public page - used as a cross-check."""
+    """What the public page itself says each token series is, used as the cross-check.
+
+    Two shapes so far. Until 2026-10-17 a flat "readings" object: a 2dp "value" and an
+    "asOf" line. Since 2026-10-18 a richer "charts" object - "value" is now "$$0.89",
+    "rawValue" carries the same 2dp number, and a "points" array carries the page's own
+    dated series at full 4dp precision. Both are read. Points are the stronger check when
+    present: they verify a whole week of our series against the publisher's own numbers at
+    full precision, where the 2dp reading only ever pinned one day.
+
+    Returns {key: (shown_2dp, as_of_text, {date: price})}.
+    """
     out = {}
     for key in ("llm-token", "open-llm", "proprietary-llm"):
-        m = re.search(
-            Q + re.escape(key) + Q + r"\s*:\s*\{" + Q + "value" + Q + r"\s*:\s*" + Q + r"([0-9.]+)" + Q
-            + r".*?" + Q + "asOf" + Q + r"\s*:\s*" + Q + r"As of ([^\\\"]+)" + Q,
-            html, re.S)
-        if m:
-            out[key] = (m.group(1), m.group(2).strip())
+        m = re.search(Q + re.escape(key) + Q + r"\s*:\s*\{", html)
+        if not m:
+            continue
+        window = html[m.end():m.end() + 8000]
+        nxt = re.search(Q + f"(?:{RE_READING_KEYS})" + Q + r"\s*:\s*\{", window)
+        if nxt:  # stop at the next series so a value can never be read from its neighbour
+            window = window[:nxt.start()]
+        shown = re.search(Q + "(?:raw)?[Vv]alue" + Q + r"\s*:\s*" + Q + r"\$*([0-9.]+)" + Q, window)
+        as_of = re.search(Q + "asOf" + Q + r"\s*:\s*" + Q + r"As of ([^\\\"]+)" + Q, window)
+        if shown and as_of:
+            out[key] = (shown.group(1), as_of.group(1).strip(), dict(RE_POINT.findall(window)))
     return out
 
 
@@ -479,12 +499,12 @@ def cross_check(series, readings):
     parse would otherwise let an unverified number enter a history that cannot be
     re-derived. Losing one day's capture is cheap - the 7-day window heals it.
     """
-    checked, as_of = 0, None
+    checked, matched, as_of = 0, 0, None
     for col, _, mkey in LLM_SERIES.values():
         if mkey not in readings:
             log(f"  WARN no public-page reading parsed for {mkey}")
             continue
-        shown, as_of = readings[mkey]
+        shown, as_of, points = readings[mkey]
         try:
             iso = datetime.strptime(as_of, "%b %d, %Y").strftime("%Y-%m-%d")
         except ValueError:
@@ -496,12 +516,23 @@ def cross_check(series, readings):
         if f"{float(portal):.2f}" != f"{float(shown):.2f}":
             raise ValueError(
                 f"{col}: portal {portal} rounds to {float(portal):.2f} but page shows {shown} (as of {iso})")
+        for day, price in sorted(points.items()):
+            ours = series[col].get(day)
+            if ours is None:
+                continue
+            if f"{float(ours):.4f}" != f"{float(price):.4f}":
+                raise ValueError(
+                    f"{col} {day}: portal says {ours} but the page's own series says {price} - "
+                    f"refusing to store, the two surfaces disagree at full precision")
+            matched += 1
         checked += 1
     if checked < len(LLM_SERIES):
         raise ValueError(
             f"cross-check covered only {checked}/{len(LLM_SERIES)} series - public page parse degraded, "
             f"refusing to store unverified values")
-    log(f"  cross-check OK - {checked}/{len(LLM_SERIES)} LLM series verified against public page (as of {as_of})")
+    detail = f", {matched} day(s) matched at 4dp" if matched else ""
+    log(f"  cross-check OK - {checked}/{len(LLM_SERIES)} LLM series verified against public page "
+        f"(as of {as_of}){detail}")
 
 
 # -------------------------------------------------------------- forward curve
@@ -536,8 +567,13 @@ def fetch_forward_curve(session, spot, archive):
         raise ValueError("forward curve: page format changed again - neither the old payload "
                          "nor the redesign's dataByGpu prop is on the page")
     try:
-        payload = _normalise_redesign_curve(props["dataByGpu"], html)
-        as_of, how = date_curve(payload, spot, archive)
+        payload, stated = _normalise_redesign_curve(props["dataByGpu"], html)
+        if stated:
+            if stated > datetime.now(timezone.utc).strftime("%Y-%m-%d"):
+                raise ValueError(f"forward curve: page dates the curve {stated}, which is in the future")
+            as_of, how = stated, "dated by the page"
+        else:
+            as_of, how = date_curve(payload, spot, archive)
     except FeedUnavailable:
         raise
     except ValueError as exc:
@@ -551,8 +587,14 @@ def fetch_forward_curve(session, spot, archive):
         "other_props": {k: v for k, v in props.items() if k != "dataByGpu"},
     }
     monthly = sum(1 for t in FC_TENORS if t in payload[FC_GPUS[0]])
+    extra = sorted(g for g in payload if g not in FC_GPUS and not g.startswith("_") and g != "date")
     log(f"  forward curve     as of {as_of} ({how})  {len(FC_GPUS)} GPUs x "
         f"{len(payload[FC_GPUS[0]])} tenors x {len(FC_RATES)} rates")
+    if extra:
+        # Archived verbatim by archive_raw_curve, so nothing is lost while the sheet's
+        # column set stays as the user specified it.
+        log(f"  note: Silicon Data is also publishing {', '.join(extra)} - kept in the raw "
+            f"archive, not in the CSV or the workbook")
     if monthly < len(FC_TENORS):
         log(f"  WARN curve carries {monthly} of {len(FC_TENORS)} monthly tenors (0-36m); "
             "the missing ones are left blank, never filled")
@@ -590,38 +632,75 @@ def _rsc_props(html, key):
     return None
 
 
+def _curve_tenors(obj):
+    """{tenor_months: {term_rate, forward_rate}} from one GPU's node map; {} if it isn't one."""
+    clean = {}
+    for k, node in (obj.items() if isinstance(obj, dict) else ()):
+        if not re.fullmatch(r"-?\d+(\.\d+)?", str(k)) or not isinstance(node, dict):
+            continue
+        try:
+            term, fwd = float(node["term_rate"]), float(node["forward_rate"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        clean[f"{float(k):g}"] = {"term_rate": term, "forward_rate": fwd}
+    return clean
+
+
 def _normalise_redesign_curve(data, html):
-    """dataByGpu -> the legacy payload shape: {GPU: {tenor_months: {term_rate, forward_rate}}}."""
+    """dataByGpu -> ({GPU: {tenor_months: {term_rate, forward_rate}}}, stated_date or None).
+
+    Two shapes of this prop so far:
+      * 2026-09-16 redesign: {"h100": {tenor: node}, ...} with no date. The bucket name is
+        the only label there is, so it is used.
+      * 2026-10 onwards: {"h100": {"date": "2026-10-31", "A100": {tenor: node}, "B200":
+        ..., "B300": ..., "H100": ...}, "a100": {...}, "b200": {...}} - every bucket holds
+        the SAME four curves and its own date. The bucket name is which tab is selected,
+        not whose curve it is: under "h100" the A100 curve really is A100's. Labelling by
+        bucket here would file A100 prices as H100 and corrupt the archive, so the nested
+        key wins whenever there is one, and buckets must agree about any GPU they share.
+        B300 arrives with this shape and is returned too - archived raw, not written to the
+        CSV or the sheet.
+    """
     if not isinstance(data, dict):
         raise ValueError(f"forward curve: dataByGpu is {type(data).__name__}, not an object")
-    by_key = {str(k).lower(): v for k, v in data.items()}
-    payload = {}
+    found, dates = {}, set()
+    for bucket, body in data.items():
+        if not isinstance(body, dict):
+            continue
+        stated = body.get("date")
+        if isinstance(stated, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", stated):
+            dates.add(stated)
+        nested = {str(k).upper(): c for k, c in ((k, _curve_tenors(v)) for k, v in body.items()) if c}
+        if not nested:  # the flat 2026-09 shape: the bucket itself is one GPU's curve
+            curve = _curve_tenors(body)
+            nested = {str(bucket).upper(): curve} if curve else {}
+        for label, curve in nested.items():
+            if found.get(label, curve) != curve:
+                raise ValueError(f"forward curve: the page's tabs disagree about {label}'s curve - "
+                                 f"refusing to guess which one is real")
+            found[label] = curve
+    if not found:
+        if FC_EMPTY_TEXT in html:
+            raise FeedUnavailable("Silicon Data is publishing no forward curve, so there is nothing "
+                                  "to capture; capture resumes by itself once they restore it. "
+                                  f'Their page reads: "{FC_EMPTY_TEXT}"')
+        # Not the same thing as an empty publisher, and must never be reported as one: the
+        # prop is there but holds nothing we recognise. 2026-10-13..10-21 was exactly this,
+        # and calling it "publishing nothing" hid a format change for nine days.
+        raise ValueError("forward curve: the page carries a dataByGpu prop but no readable tenor "
+                         "data - the format has changed again")
+    if len(dates) > 1:
+        raise ValueError(f"forward curve: the page's tabs carry different dates {sorted(dates)}")
     for gpu in FC_GPUS:
-        nodes = by_key.get(gpu.lower())
-        clean = {}
-        for k, node in (nodes.items() if isinstance(nodes, dict) else ()):
-            if not re.fullmatch(r"-?\d+(\.\d+)?", str(k)) or not isinstance(node, dict):
-                continue
-            try:
-                term, fwd = float(node["term_rate"]), float(node["forward_rate"])
-            except (KeyError, TypeError, ValueError):
-                continue
-            clean[f"{float(k):g}"] = {"term_rate": term, "forward_rate": fwd}
-        payload[gpu] = clean
-    if not any(payload.values()):
-        said = f' Their page reads: "{FC_EMPTY_TEXT}"' if FC_EMPTY_TEXT in html else ""
-        raise FeedUnavailable("Silicon Data is publishing no forward curve, so there is nothing to "
-                              "capture; capture resumes by itself once they restore it." + said)
-    for gpu in FC_GPUS:
-        if not payload[gpu]:
-            raise ValueError(f"forward curve: {gpu} is empty while other GPUs carry data")
-        if "0" not in payload[gpu]:
+        if not found.get(gpu):
+            raise ValueError(f"forward curve: {gpu} is missing while {sorted(found)} carry data")
+        if "0" not in found[gpu]:
             raise ValueError(f"forward curve: {gpu} has no tenor-0 (spot) node to check against")
-    top = max(float(t) for nodes in payload.values() for t in nodes)
+    top = max(float(t) for nodes in found.values() for t in nodes)
     if top <= 5:
         raise ValueError(f"forward curve: longest tenor key is {top:g}, which reads as years "
                          "rather than months; not guessing the scale")
-    return payload
+    return found, (dates.pop() if dates else None)
 
 
 def date_curve(payload, spot, archive):
